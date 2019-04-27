@@ -18,6 +18,23 @@
                             <label for="price">Preis</label>
                             <input type="currency" name="" id="price" placeholder="Preis in Euro" class="form-control" v-model="price">
                         </div>
+                        
+                         <div class="container p-3">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" id="drinks" value="drinks" v-model="type" >
+                                <label class="form-check-label" for="drinks">Getränk</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" id="dish" value="dish" v-model="type" >
+                                <label class="form-check-label" for="dish">Gericht</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" id="sushi" value="sushi" v-model="type" >
+                                <label class="form-check-label" for="sushi">Sushi</label>
+                            </div>
+
+                        </div>
+                        <hr>
                         <div class="container p-3">
                                 <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="checkbox" id="lachs" value="Lachs" v-model="options" >
@@ -32,6 +49,7 @@
                                 <label class="form-check-label" for="garnele">Garnele</label>
                             </div>
                         </div>
+                        
                         <div class="container">
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="checkbox" id="mango" value="Mango" v-model="options" >
@@ -52,7 +70,7 @@
                         </div>
 
 
-                      <button type="submit" class="btn btn-lg btn-secondary mt-5">Submit</button>
+                      <button type="submit" class="btn btn-lg btn-secondary mt-5">Anlegen</button>
 
                     </form>
                 </div>
@@ -77,7 +95,8 @@ import axios from 'axios'
                 number: null,
                 name: '',
                 price: null,
-                options: []
+                options: [],
+                type: ''
         }
         }, 
         methods: {
@@ -86,7 +105,8 @@ import axios from 'axios'
                 number: this.number,
                 name: this.name,
                 price: this.price,
-                options: this.options
+                options: this.options,
+                type: this.type
             }
             axios.post('https://kunz-sushi.firebaseio.com/menu.json', formData)
             .then(res => console.log(res))

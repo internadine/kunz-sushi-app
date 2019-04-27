@@ -1,63 +1,88 @@
 <template>
-    <div class="container text-center mt-5">
+  <div class="container text-center mt-5">
 
-            <button class="btn-lg btn-info px-5">BESTELLUNG </button>
-            <ul class="list-group shadow p-2 text-info">
-                <Item class="text-left" v-for="(dish, index) in menu" :key="index" v-bind:mydish="dish"></Item>
-            </ul>
-            <!-- Modal -->
-<div class="modal fade" id="fillings" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+
+      <!-- Choose type of Menu-Item -->
+
+      <div class="btn-group shadow mb-3" role="group" aria-label="Basic example" >
+        <button type="button" class="btn btn-info" @click="selection = 'drinks'"><i class="fas fa-wine-bottle"></i>
+          Getränke</button>
+        <button type="button" class="btn btn-info" @click="selection = 'dish'"><i class="fas fa-utensils"></i>
+          Gerichte</button>
+        <button type="button" class="btn btn-info" @click="selection = 'sushi'"> <i class="fas fa-fish"></i>
+          Sushi</button>
       </div>
-      <div class="modal-body">
-        ...
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
+
+    <!-- List of Menu Items -->
+
+      <ul class="list-group shadow p-2 text-info">
+          <Item v-for="(item, index) in menu" :key="index" :item ="item" :selection="selection"></Item>
+      </ul>
+      
+      <router-link to="/tisch"><i class="fas fa-check-circle fa-4x text-info mt-5"></i></router-link>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="fillings" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            ...
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Save changes</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-</div>
-    </div>
 
 
 </template>
 
 <script>
-    import Item from './Item.vue';
-    import axios from 'axios';
-    export default {
-        name: 'Bestellung',
-        components: {
-            Item
-        },
-        data() {
-            return {
-                menu: []
-            }
-        },
+  import Item from './Item.vue';
+  import axios from 'axios';
 
-        created() {
-            axios.get('https://kunz-sushi.firebaseio.com/menu.json')
-                .then(response => {
-                    const data = response.data
-                    const menu = []
-                    for (let key in data) {
-                        const item = data[key]
-                        item.id = data[key]
-                        menu.push(item)
-                    }
-                    this.menu = menu
-                })
-        }
+  export default {
+    name: 'Bestellung',
+    components: {
+      Item
+    },
+    data() {
+      return {
+        menu: [],
+        selection: 'drinks',
+        attachBG: false,
+      }
+    },
 
-
-    }
+    created() {
+      axios.get('https://kunz-sushi.firebaseio.com/menu.json')
+        .then(response => {
+          const data = response.data
+          const menu = []
+          for (let key in data) {
+            const item = data[key]
+            item.id = data[key]
+            menu.push(item)
+          }
+          this.menu = menu
+        })
+    },
+  }
 </script>
+
+<style scoped>
+  .green {
+    background-color: #e0e0e0;
+  }
+</style>

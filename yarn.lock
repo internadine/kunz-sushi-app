@@ -7385,6 +7385,11 @@ uglify-js@3.4.x:
     commander "~2.19.0"
     source-map "~0.6.1"
 
+underscore@^1.9.1:
+  version "1.9.1"
+  resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.9.1.tgz#06dce34a0e68a7babc29b365b8e74b8925203961"
+  integrity sha512-5/4etnCkd9c8gwgowi5/om/mYO5ajCaOgdzj/oW+0eQV9WxKBDZw5+ycmKmeaTXjInS/W0BzpGLo2xR2aBwZdg==
+
 unicode-canonical-property-names-ecmascript@^1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/unicode-canonical-property-names-ecmascript/-/unicode-canonical-property-names-ecmascript-1.0.4.tgz#2619800c4c825800efdd8343af7dd9933cbe2818"
@@ -7663,11 +7668,6 @@ vue@^2.6.6:
   version "2.6.10"
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.6.10.tgz#a72b1a42a4d82a721ea438d1b6bf55e66195c637"
   integrity sha512-ImThpeNU9HbdZL3utgMCq0oiMzAkt1mcgy3/E6zWC/G6AaQoeuFdsl9nDhTDU3X1R6FK7nsIUuRACVcjI+A2GQ==
-
-vuetify@^1.5.12:
-  version "1.5.12"
-  resolved "https://registry.yarnpkg.com/vuetify/-/vuetify-1.5.12.tgz#77d18fc7ea5d6297bac40880df83fc241ba840a2"
-  integrity sha512-NxYNPiqEEgprTzNft0x0oiyOgbclbARgOJMKWRfeu3qx8pE0JG3XMgljVv1Ttq0ErKf1lvNLFRuajDgRdQxR/Q==
 
 vuex@^3.1.0:
   version "3.1.0"

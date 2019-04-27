@@ -1,23 +1,21 @@
 <template>
     <div class=" mt-5 ">
+
+
         <ul class="list-group shadow p-2 text-info">
-            <li class="list-group-item" v-for="(item,index) in order" :key="index"> {{item.counter}} | <span
-                    style="color: #990000">{{item.name}}</span>
+            <li class="list-group-item" v-for="(item,index) in show" :key="index"> {{item.quantity}} x  <span class="ml-4"
+                     style="color: #990000">{{item.name}}</span>
 
 
-                <i class=" fas fa-chevron-circle-up pl-5 pr-2 " @click="incrementCounter(index)"></i>
-                <i class="fas fa-chevron-circle-down px-2" @click="decrementCounter(index)"></i>
-                <i class="fas fa-trash-alt px-2" @click="remove(index)"></i>
+                <i class="d-flex fas fa-trash-alt px-2 justify-content-end" @click="remove(index)"></i>
 
 
-
-
-
-                <span class="d-flex text-muted justify-content-end" v-for="(option, index) in item.options"
+                <span class="d-inline-flex text-muted justify-content-end" v-for="(option, index) in item.options"
                     :key="index">
                     <small>{{option}} </small> </span>
              </li>
-        </ul>
+        </ul> 
+
     </div>
 </template>
 
@@ -26,32 +24,22 @@
         name: 'TischAnsicht',
         data() {
             return {
-                order: [{
-                        counter: 1,
-                        name: 'Futo Maki',
-                        options: ["Lachs", "Frischkäse"],
-                        timeStamp: '17:30'
-                    },
-                    {
-                        counter: 1,
-                        name: 'Hoso Maki',
-                        options: ["Lachs", "Frischkäse", "Avo"],
-                        timeStamp: '17:30'
-                    }
-                ]
+                order: []
             }
 
         },
+        computed: {
+            show() {
+                return this.$store.getters.orderItems;
+            }
+        }, 
         methods: {
-            incrementCounter: function (index) {
-                this.order[index].counter += 1;
-            },
-            decrementCounter: function (index) {
-                this.order[index].counter -= 1;
-            },
-            remove: function(index) {
-                //some text
+            remove(index) {
+                this.$store.dispatch('removeItem', index)
             }
         }
-    }
+        
+  }
+        
+    
 </script>

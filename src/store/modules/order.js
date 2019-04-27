@@ -1,25 +1,41 @@
+import _ from 'underscore';
+
 const state = {
-    order: []
+    orderItems: []
 }; 
 
 const getters = {
-    showOrder: (state) => state.order
+    orderItems: state => {
+        return state.orderItems
     }
-; 
-
-const actions = {
-    checkOut: ({commit}) => {
-        commit('clearTable');
-        //any ajax request to firebase to save data
-    }
+    
 }; 
 
 const mutations = {
-    setOrder: (state, addItem) => {
-        state.order.push(addItem)
+    'SET_ITEM' (state, orderItem) {
+        state.orderItems.push(orderItem);
     },
-    clearTable: (state) => {
-        state.order = []
+    'DELETE_ITEM' (state, index) {
+        
+        state.orderItems.splice(index, 1)
+    },
+    'ADD_TABLE' (state, tableInfo) {
+        state.orderItems.forEach(function(el){
+            _.extend(el, tableInfo)
+        })
+    }
+}; 
+
+const actions = {
+    updateOrderItems: ({commit}, orderItem ) => {
+        commit('SET_ITEM', orderItem)
+    },
+    removeItem: ({commit}, index) => {
+
+        commit('DELETE_ITEM',index)
+    },
+    addTable: ({commit}, tableInfo) => {
+        commit('ADD_TABLE', tableInfo)
     }
 }; 
 
