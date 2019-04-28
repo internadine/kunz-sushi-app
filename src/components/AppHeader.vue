@@ -14,6 +14,9 @@
         <router-link class="nav-link" to="/bestellung" tag="li" active-class="active" exact> <i class="d-none d-md-inline fas fa-shoe-prints fa-2x"></i> Bestellen </router-link >
       </li>
       <li class="nav-item mr-4">
+        <router-link  class="nav-link" to="/tischupdate" tag="li" active-class="active" exact> <i class="d-none d-md-inline  fas fa-people-carry fa-2x"></i> Tisch  </router-link >
+      </li>
+      <li class="nav-item mr-4">
         <router-link  class="nav-link" to="/sushi" tag="li" active-class="active" exact> <i class="d-none d-md-inline  fas fa-fish fa-2x"></i> Sushi  </router-link >
       </li>
          <li class="nav-item">

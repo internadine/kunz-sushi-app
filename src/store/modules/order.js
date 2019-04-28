@@ -1,4 +1,8 @@
 import _ from 'underscore';
+import { router } from '../../main';
+import axios from 'axios';
+
+
 
 const state = {
     orderItems: []
@@ -7,6 +11,12 @@ const state = {
 const getters = {
     orderItems: state => {
         return state.orderItems
+    },
+    getTableInfo() {
+        axios.get('https://kunz-sushi.firebaseio.com/orderItem.json')
+        .then(response => {
+            state.orderItems = response.data
+        })
     }
     
 }; 
@@ -23,6 +33,17 @@ const mutations = {
         state.orderItems.forEach(function(el){
             _.extend(el, tableInfo)
         })
+    },
+    'ORDER' (state) {
+        axios.post('https://kunz-sushi.firebaseio.com/orderItem.json', state.orderItems)
+        // eslint-disable-next-line 
+        .then(res => console.log(res))
+        // eslint-disable-next-line 
+        .catch(error => console.log(error))
+
+    },
+    'CLEAR_STATE' (state) {
+        state.orderItems = []
     }
 }; 
 
@@ -35,7 +56,12 @@ const actions = {
         commit('DELETE_ITEM',index)
     },
     addTable: ({commit}, tableInfo) => {
-        commit('ADD_TABLE', tableInfo)
+        commit('ADD_TABLE', tableInfo);
+        router.push('/bestellung');
+        commit('ORDER');
+        commit('CLEAR_STATE')
+
+
     }
 }; 
 
