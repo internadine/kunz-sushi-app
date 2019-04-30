@@ -19,16 +19,17 @@
                     <option>10</option>
                 </select>
             </div>
+            
 
-              <div class="container text-right">
-                <router-link to="/bestellung"><i class="fas fa-plus mt-3 text-info fa-3x"></i></router-link>
-            </div>
-            <ul class="list-group p2 shadow text-info mt-3" v-if="table">
+             
+            <ul class="list-group p2 shadow text-info mt-5" v-if="table">
                 <tisch-update-item v-for="(item, index) in order" :key="index" :table="table" :item="item"></tisch-update-item>
             </ul>
-
+             <div class="container text-right mt-3">
+                <router-link to="/bestellung"><i class="fas fa-plus mt-3 text-info fa-3x"></i></router-link>
+            </div>
            
-            <div class="d-flex justify-content-center"><button class="btn btn-lg btn-info shadow mt-5 " type="submit">Bestellung abschicken</button></div>
+        <!--    <div class="d-flex justify-content-center"><button class="btn btn-lg btn-info shadow mt-5 " type="submit">Bestellung abschicken</button></div> -->
             
         </form>
 

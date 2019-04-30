@@ -2,31 +2,12 @@
   <div class="container">
 
 
-    <div class="menuItem text-info border rounded border-info shadow">
-      <div class="d-flex flex-row justify-content-around">
-        <div class="p-2 "> <h4>Tisch 1</h4>  </div>
-        <div class="p-2">
-          
-           <div class="form-group">
-
-    <select class="form-control" >
-      <option>1</option>
-      <option>2</option>
-      <option>3</option>
-      <option>4</option>
-      <option>5</option>
-    </select>
-  </div>
-          
-          
-          </div>
-        <div class="p-2 " > <h4 > <span style="color: #990000" class="ml-2">Hoso Maki</span> </h4> </div>
-        <div class="p-2 "><i class="fas fa-check-circle fa-2x"></i></div>
-      </div>
-      <div class="d-flex flex-row-reverse">
-        <div class="p-1 text-muted">Lachs</div>
-        <div class="p-1 text-muted">Mango</div>
-        <div class="p-1 text-muted">Avocado</div>
+    <div class="menuItem text-info border rounded border-info shadow" v-for="(item, index) in sushi" :key="index">
+      <div class="d-flex flex-row justify-content-between">
+        <div class="p-2 "> <h4>Tisch {{item.table}} </h4>  </div>
+        <div class="p-2 " > <h4 > <span style="color: #990000" class="ml-2">{{item.name}}</span> </h4> </div>
+        <div class="p-2 text-muted" v-for="(option, index) in item.options" :key="index">{{option.options}} </div>
+        <div class="p-2 "><i class="fas fa-check-circle fa-3x"></i></div>
       </div>
     </div>
 
@@ -36,15 +17,32 @@
 </template>
 
 <script>
+import axios from 'axios'
   export default {
     name: 'Sushi',
     data() {
       return {
-        items: [
-
+        sushi: [
         ]
       }
-    }
+    },
+    created() {
+      axios.get('https://kunz-sushi.firebaseio.com/orderItem.json?orderBy="type"&equalTo="sushi"')
+        .then(response => {
+          const data = response.data
+          console.log(data)
+          const order = []
+          for (let key in data) {
+            const item = data[key]
+            item.id = data[key]
+
+ 
+                 order.push(item)
+                 console.log(order)
+          }
+          this.sushi = order
+        })
+    },
   }
 </script>
 

@@ -1,10 +1,11 @@
 <template>
     <div>
-        <li class="list-group-item" v-for="(item,index) in filter" :key="index"> {{item.quantity}} x <span class="ml-4"
-                style="color: #990000">{{item.name}}</span>
+      
+        <li class="list-group-item" v-for="(item,index) in filter" :key="index">  {{item.quantity}} x <span class="ml-4"
+                style="color: #990000">{{item.name}}</span> <div class="d-flex justify-content-end" > {{item.party}}</div>
 
 
-            <i class="d-flex fas fa-trash-alt px-2 justify-content-end" @click="remove(index)"></i>
+           <!-- <i class="d-flex fas fa-trash-alt px-2 justify-content-end" @click="remove(index)"></i> -->
 
 
             <span class="d-inline-flex text-muted justify-content-end" v-for="(option, index) in item.options"
@@ -33,7 +34,7 @@
                     if (item.table == this.table) {
                         Filter.push(item)
                     }
-
+                
                 }
                 return Filter
             }

@@ -23,7 +23,8 @@ const getters = {
 
 const mutations = {
     'SET_ITEM' (state, orderItem) {
-        state.orderItems.push(orderItem);
+
+            state.orderItems.push(orderItem)
     },
     'DELETE_ITEM' (state, index) {
         
@@ -35,11 +36,14 @@ const mutations = {
         })
     },
     'ORDER' (state) {
-        axios.post('https://kunz-sushi.firebaseio.com/orderItem.json', state.orderItems)
+        state.orderItems.forEach(el => {
+              axios.post('https://kunz-sushi.firebaseio.com/orderItem.json', el)
         // eslint-disable-next-line 
         .then(res => console.log(res))
         // eslint-disable-next-line 
         .catch(error => console.log(error))
+        })
+      
 
     },
     'CLEAR_STATE' (state) {
@@ -49,6 +53,7 @@ const mutations = {
 
 const actions = {
     updateOrderItems: ({commit}, orderItem ) => {
+
         commit('SET_ITEM', orderItem)
     },
     removeItem: ({commit}, index) => {
