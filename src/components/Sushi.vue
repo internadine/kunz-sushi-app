@@ -1,48 +1,95 @@
 <template>
   <div class="container">
-
-
     <div class="menuItem text-info border rounded border-info shadow" v-for="(item, index) in sushi" :key="index">
       <div class="d-flex flex-row justify-content-between">
-        <div class="p-2 "> <h4>Tisch {{item.table}} </h4>  </div>
-        <div class="p-2 " > <h4 > <span style="color: #990000" class="ml-2">{{item.name}}</span> </h4> </div>
-        <div class="p-2 text-muted" v-for="(option, index) in item.options" :key="index">{{option.options}} </div>
-        <div class="p-2 "><i class="fas fa-check-circle fa-3x"></i></div>
+        <div class="p-2 ">
+          <h4>Tisch {{item.table}}</h4>
+        </div>
+        <div class="p-2 ">
+          <h4> <span style="color: #990000" class="ml-2">{{item.name}}</span> </h4>
+        </div>
+        <div class="p-2 text-muted" v-for="(option, index) in item.options" :key="index">{{option}} </div>
+        <div class="p-2 "><i class="fas fa-check-circle fa-3x"
+            @click="setToDone(item.dbID, item.name, item.orderTime, item.party, item.price, item.quantity, item.table, item.type, item.options)"></i>
+        </div>
       </div>
     </div>
-
-
-
   </div>
 </template>
 
 <script>
-import axios from 'axios'
+  import axios from 'axios'
+  import _ from 'underscore';
+
   export default {
     name: 'Sushi',
     data() {
       return {
-        sushi: [
-        ]
+        sushi: []
       }
     },
     created() {
       axios.get('https://kunz-sushi.firebaseio.com/orderItem.json?orderBy="type"&equalTo="sushi"')
         .then(response => {
           const data = response.data
-          console.log(data)
-          const order = []
-          for (let key in data) {
+          let order = []
+          for (const key in data) {
             const item = data[key]
+            item = _.extend(item, {
+              dbID: key
+            })
             item.id = data[key]
+            order.push(item)
 
- 
-                 order.push(item)
-                 console.log(order)
           }
+          order = _.sortBy(order, 'orderTime');
           this.sushi = order
         })
     },
+    methods: {
+      setToDone(dbID, name, orderTime, party, price, quantity, table, type, options) {
+        var today = new Date();
+        var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+        var time = today.getHours() + ":" + today.getMinutes();
+        var dateTime = date + ' ' + time;
+        const doneSushi = {
+          name: name,
+          price: price,
+          quantity: quantity,
+          orderTime: orderTime,
+          doneTime: dateTime,
+          status: status,
+          type: 'done-sushi',
+          table: table,
+          options: options
+        };
+        console.log(doneSushi)
+        axios.put(`https://kunz-sushi.firebaseio.com/orderItem/${dbID}.json`, doneSushi)
+          .then(res => {
+            axios.get('https://kunz-sushi.firebaseio.com/orderItem.json?orderBy="type"&equalTo="sushi"')
+              .then(response => {
+                const data = response.data
+                let order = []
+                for (const key in data) {
+                  const item = data[key]
+                  item = _.extend(item, {
+                    dbID: key
+                  })
+                  item.id = data[key]
+                  order.push(item)
+                }
+                order = _.sortBy(order, 'orderTime');
+                this.sushi = order
+              })
+
+
+
+          })
+          // eslint-disable-next-line 
+          .catch(error => console.log(error))
+
+      }
+    }
   }
 </script>
 

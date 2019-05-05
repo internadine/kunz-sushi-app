@@ -1,9 +1,9 @@
 <template>
 
-    <li v-if="item.type == selection" class="list-group-item text-left" @click="attachBG = !attachBG"
-        :class="{grey: attachBG}">
+    <li v-if="item.type == selection" class="list-group-item text-left" >
         <span style="color: #990000">{{item.name}}</span>
-        <small class="ml-4"> {{item.price}} Euro </small>
+        <small class="ml-4"> {{item.price}} Euro</small>
+         <small class="ml-4" v-for="(item, index) in filling" :key="index" @click="remove(index)"> {{item}} </small>
         <select class="form-control inline" @change="order" v-model="quantity">
             <option>0</option>
             <option>1</option>
@@ -16,11 +16,13 @@
             <option>8</option>
             <option>9</option>
         </select>
+        <div class="container mt-3 text-muted" v-if="item.options">
+            <span class="d-flex-inline justify-content-end p-3" v-for="(option, index) in item.options" :key="index" @click="selectFilling(option)">
+             {{option}} </span>
 
-        <span class="d-flex text-muted justify-content-end mt-2" v-if="item.options">
-            <!-- Button trigger modal -->
-            <small> <a data-toggle="modal" data-target="#fillings">Füllung auswählen </a></small> </span>
 
+        </div>
+       
     </li>
 
 
@@ -36,7 +38,10 @@
         data() {
             return {
                 attachBG: false,
-                quantity: 0
+                quantity: 0,
+                markClicked: false,
+                filling: []
+
             }
         },
         methods: {
@@ -50,21 +55,25 @@
                     price: this.item.price,
                     quantity: this.quantity,
                     type: this.selection,
-                    orderTime: dateTime
+                    status: 'open',
+                    orderTime: dateTime,
+                    options: this.filling,
                 };
                 // eslint-disable-next-line
                 console.log(orderItem)
                 this.$store.dispatch('updateOrderItems', orderItem);
-            }
+                this.filling = []
+            },
+            selectFilling(option) {
+                this.filling.push(option)
+            },
+            remove(index){
+                this.filling.splice(index, 1)
+            } 
+        
         }
 
 
     }
 </script>
 
-
-<style scoped>
-    .grey {
-        background-color: #e0e0e0;
-    }
-</style>

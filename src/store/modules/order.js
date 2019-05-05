@@ -5,7 +5,8 @@ import axios from 'axios';
 
 
 const state = {
-    orderItems: []
+    orderItems: [],
+    doneSushi: []
 }; 
 
 const getters = {

@@ -1,5 +1,5 @@
 <template>
-    <div class="container text-center ">
+    <div class="container text-center text-info">
         <h2 class="mt-5">Neue Gerichte anlegen</h2>
         <div class="row mt-5 text-left ">
             <div class="col-2"></div>

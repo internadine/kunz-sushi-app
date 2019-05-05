@@ -10,7 +10,7 @@
                 <i class="d-flex fas fa-trash-alt px-2 justify-content-end" @click="remove(index)"></i>
 
 
-                <span class="d-inline-flex text-muted justify-content-end" v-for="(option, index) in item.options"
+                <span class="d-inline-flex text-muted justify-content-end ml-2" v-for="(option, index) in item.options"
                     :key="index">
                     <small>{{option}} </small> </span>
              </li>

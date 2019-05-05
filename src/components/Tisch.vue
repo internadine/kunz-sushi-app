@@ -42,7 +42,7 @@
         name: 'Tisch',
         data() {
             return {
-                table: 1,
+                table: '',
                 party: ''
             }
         },
