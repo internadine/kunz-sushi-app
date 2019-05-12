@@ -12,7 +12,7 @@
 
                 <span class="d-inline-flex text-muted justify-content-end ml-2" v-for="(option, index) in item.options"
                     :key="index">
-                    <small>{{option}} </small> </span>
+                    <small> * {{option}} </small> </span>
              </li>
         </ul> 
 

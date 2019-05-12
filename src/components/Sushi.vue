@@ -10,7 +10,7 @@
         </div>
         <div class="p-2 text-muted" v-for="(option, index) in item.options" :key="index">{{option}} </div>
         <div class="p-2 "><i class="fas fa-check-circle fa-3x"
-            @click="setToDone(item.dbID, item.name, item.orderTime, item.party, item.price, item.quantity, item.table, item.type, item.options)"></i>
+            @click="setToDone(item.dbID, item.name, item.orderTime, item.party, item.price, item.quantity, item.table, item.type, item.options, item.party)"></i>
         </div>
       </div>
     </div>
@@ -61,7 +61,8 @@
           status: status,
           type: 'done-sushi',
           table: table,
-          options: options
+          options: options,
+          party: party
         };
         console.log(doneSushi)
         axios.put(`https://kunz-sushi.firebaseio.com/orderItem/${dbID}.json`, doneSushi)

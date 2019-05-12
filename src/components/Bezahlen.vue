@@ -22,19 +22,24 @@
 
 
       <ul class="list-group p2 shadow text-info mt-5" v-if="order.length > 0">
-        <bezahl-item v-for="(item, index) in order" :key="index" :pay="item"></bezahl-item>
+        <bezahl-item v-for="(item, index) in order" :key="index" :pay="item" @getGroup ="calcSplitPrice"></bezahl-item>
       </ul>
 
-      <ul class="list-group p2 shadow text-info mt-5" v-if="order.length > 0">
-        <li class="d-flex bd-highlight list-group-item">
-          <div class="p-2 bd-highlight">Summe in Euro </div>
-          <div class="p-2 bd-highlight ml-auto p-2">{{sum}}</div>
-
+<ul class="list-group p2 shadow text-info mt-5 " v-if="splitSum">
+        <li class="d-flex bd-highlight list-group-item border border-danger">
+          <div class="p-2 bd-highlight" v-if="order.length > 0">Summe in Euro ({{payParty}}) </div>
+          <div class="p-2 bd-highlight ml-auto p-2" >{{splitSum}}</div>
         </li>
       </ul>
+      <ul class="list-group p2 shadow text-info mt-5" v-if="order.length > 0 && splitSum ==null">
+        <li class="d-flex bd-highlight list-group-item">
+          <div class="p-2 bd-highlight">Summe in Euro (Gesamt) </div>
+          <div class="p-2 bd-highlight ml-auto p-2" >{{sum}} </div>
+        </li>
+      </ul>
+      
       <div class="container text-right mt-5"><button class="btn-lg btn-info shadow " @click="setStatus">Bezahlt</button>
       </div>
-      <!--    <div class="d-flex justify-content-center"><button class="btn btn-lg btn-info shadow mt-5 " type="submit">Bestellung abschicken</button></div> -->
 
 
   </div>
@@ -52,6 +57,8 @@
         table: null,
         order: [],
         sum: null,
+        splitSum: null,
+        payParty: '',
       }
     },
     components: {
@@ -85,6 +92,7 @@
             sum = priceArray.reduce((total, amount) => total + amount);      
             this.sum = sum
             this.order = order
+            console.log(this.order)
 
 
             }
@@ -94,7 +102,8 @@
       },
       setStatus() {
         this.order.forEach(el => {
-           const paidOrder = {
+          if (this.payParty == el.party || this.payParty == '') {
+            const paidOrder = {
           name: el.name,
           price: el.price,
           quantity: el.quantity,
@@ -102,8 +111,8 @@
           doneTime: el.doneTime,
           options: el.options,
           status: 'paid'
-        };
-        console.log(paidOrder)
+        }
+          console.log(paidOrder)
           axios.put(`https://kunz-sushi.firebaseio.com/orderItem/${el.dbID}.json`, paidOrder)
             .then(response => {
             console.log(response);
@@ -111,11 +120,19 @@
             .catch(err => {
               console.log(err);
             });
-
+         }
         })
         this.$router.push('/bestellung')
-
-
+      },
+      calcSplitPrice(payParty) {
+        this.splitSum = null
+        this.order.forEach(el => {
+          if (el.party == payParty ) {
+            this.splitSum = this.splitSum + parseFloat(el.price * el.quantity)
+            this.payParty = payParty
+          }
+          console.log(this.splitSum)
+        })
       }
     }
 
