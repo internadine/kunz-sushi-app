@@ -67,7 +67,7 @@
     methods: {
       getTableData() {
         axios.get(
-            `https://kunz-sushi.firebaseio.com/orderItem.json?orderBy="table"&equalTo="${this.table}"`
+            `https://kunz-sushi-35c35.firebaseio.com/orderItem.json?orderBy="table"&equalTo="${this.table}"`
           )
           .then(response => {
             const data = response.data
@@ -75,7 +75,7 @@
             const priceArray = []
             let sum = null
             for (const key in data) {
-              const item = data[key]
+              let item = data[key]
               item = _.extend(item, {
                 dbID: key
               })
@@ -92,9 +92,6 @@
             sum = priceArray.reduce((total, amount) => total + amount);      
             this.sum = sum
             this.order = order
-            console.log(this.order)
-
-
             }
             
           })
@@ -112,12 +109,13 @@
           options: el.options,
           status: 'paid'
         }
-          console.log(paidOrder)
-          axios.put(`https://kunz-sushi.firebaseio.com/orderItem/${el.dbID}.json`, paidOrder)
+          axios.put(`https://kunz-sushi-35c35.firebaseio.com/orderItem/${el.dbID}.json`, paidOrder)
             .then(response => {
+              // eslint-disable-next-line
             console.log(response);
             })
             .catch(err => {
+              // eslint-disable-next-line
               console.log(err);
             });
          }
@@ -131,7 +129,6 @@
             this.splitSum = this.splitSum + parseFloat(el.price * el.quantity)
             this.payParty = payParty
           }
-          console.log(this.splitSum)
         })
       }
     }

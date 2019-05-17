@@ -29,12 +29,12 @@
       }
     },
     created() {
-      axios.get('https://kunz-sushi.firebaseio.com/orderItem.json?orderBy="type"&equalTo="sushi"')
+      axios.get('https://kunz-sushi-35c35.firebaseio.com/orderItem.json?orderBy="type"&equalTo="sushi"')
         .then(response => {
           const data = response.data
           let order = []
           for (const key in data) {
-            const item = data[key]
+            let item = data[key]
             item = _.extend(item, {
               dbID: key
             })
@@ -64,15 +64,16 @@
           options: options,
           party: party
         };
-        console.log(doneSushi)
-        axios.put(`https://kunz-sushi.firebaseio.com/orderItem/${dbID}.json`, doneSushi)
+        axios.put(`https://kunz-sushi-35c35.firebaseio.com/orderItem/${dbID}.json`, doneSushi)
           .then(res => {
-            axios.get('https://kunz-sushi.firebaseio.com/orderItem.json?orderBy="type"&equalTo="sushi"')
+            // eslint-disable-next-line
+            console.log(res)
+            axios.get('https://kunz-sushi-35c35.firebaseio.com/orderItem.json?orderBy="type"&equalTo="sushi"')
               .then(response => {
                 const data = response.data
                 let order = []
                 for (const key in data) {
-                  const item = data[key]
+                  let item = data[key]
                   item = _.extend(item, {
                     dbID: key
                   })

@@ -34,6 +34,7 @@
 
   export default {
     name: 'Bestellung',
+    
     components: {
       Item
     },
@@ -44,9 +45,10 @@
         attachBG: false,
       }
     },
+  
 
     created() {
-      axios.get('https://kunz-sushi.firebaseio.com/menu.json')
+      axios.get('https://kunz-sushi-35c35.firebaseio.com/menu.json')
         .then(response => {
           const data = response.data
           const menu = []
@@ -55,7 +57,6 @@
             item.id = data[key] 
             menu.push(item)
           }
-          console.log(`Mein Menu in Data ${menu}`)
           this.menu = menu
         })
     },

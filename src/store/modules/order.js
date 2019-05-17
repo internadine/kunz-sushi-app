@@ -6,7 +6,8 @@ import axios from 'axios';
 
 const state = {
     orderItems: [],
-    doneSushi: []
+    doneSushi: [],
+    UserID: null,
 }; 
 
 const getters = {
@@ -14,15 +15,23 @@ const getters = {
         return state.orderItems
     },
     getTableInfo() {
-        axios.get('https://kunz-sushi.firebaseio.com/orderItem.json')
+        axios.get('https://kunz-sushi-35c35.firebaseio.com/orderItem.json')
         .then(response => {
             state.orderItems = response.data
         })
-    }
+    },
+    isLoggedIn: (state) => {
+        if (state.UserID != null) {
+            return true
+        }
+        
+    },
+
     
 }; 
 
 const mutations = {
+
     'SET_ITEM' (state, orderItem) {
 
             state.orderItems.push(orderItem)
@@ -38,17 +47,22 @@ const mutations = {
     },
     'ORDER' (state) {
         state.orderItems.forEach(el => {
-              axios.post('https://kunz-sushi.firebaseio.com/orderItem.json', el)
-        // eslint-disable-next-line 
-        .then(res => console.log(res))
+              axios.post('https://kunz-sushi-35c35.firebaseio.com/orderItem.json', el)
+         
+        .then(res => {
+            // eslint-disable-next-line 
+            console.log(res);
+        })
         // eslint-disable-next-line 
         .catch(error => console.log(error))
         })
-      
 
     },
     'CLEAR_STATE' (state) {
         state.orderItems = []
+    }, 
+    'SET_UID' (state, idToken) {
+        state.UserID = idToken
     }
 }; 
 
@@ -68,6 +82,13 @@ const actions = {
         commit('CLEAR_STATE')
 
 
+    },
+    saveUserId: ({commit}, idToken) => {
+        commit('SET_UID', idToken)
+    }, 
+    logout: ({commit}) => {
+        commit('SET_UID', null);
+        router.push('/')
     }
 }; 
 

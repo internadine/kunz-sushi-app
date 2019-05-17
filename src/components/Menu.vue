@@ -127,8 +127,10 @@
                     options: this.options,
                     type: this.type
                 }
-                axios.post('https://kunz-sushi.firebaseio.com/menu.json', formData)
+                axios.post('https://kunz-sushi-35c35.firebaseio.com/menu.json', formData)
+                // eslint-disable-next-line 
                     .then(res => console.log(res))
+                    // eslint-disable-next-line 
                     .catch(error => console.log(error))
                 event.target.reset()
             }

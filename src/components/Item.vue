@@ -74,9 +74,14 @@
                 console.log(orderItem)
                 this.$store.dispatch('updateOrderItems', orderItem);
                 if (this.filling.length > 0 ) {
+                    setTimeout( function myFunction() {
                     this.quantity = 0;
+                    this.filling = []
+                    }
+                    , 3000)
+                    
                 }
-                this.filling = []
+                
                 
             },
             selectFilling(option) {
