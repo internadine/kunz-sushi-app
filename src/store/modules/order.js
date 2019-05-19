@@ -1,6 +1,8 @@
 import _ from 'underscore';
 import { router } from '../../main';
 import axios from 'axios';
+import * as firebase from "firebase/app"
+import 'firebase/auth'
 
 
 const state = {
@@ -26,11 +28,8 @@ const getters = {
         if (state.UserID != null) {
             return true
         }
-        
     },
     serveToken: (state) => state.UserID
-
-    
 }; 
 
 const mutations = {
@@ -48,13 +47,13 @@ const mutations = {
             _.extend(el, tableInfo)
         })
     },
-    'ORDER' (state) {
-        state.orderItems.forEach(el => {
-              axios.post('https://kunz-sushi-35c35.firebaseio.com/orderItem.json', el)
-         
+    'ORDER' (state, idToken) {
+        state.orderItems.forEach(function(el) {
+              axios.post(`https://kunz-sushi-35c35.firebaseio.com/orderItem.json?auth=${idToken}`, el)
         .then(res => {
             // eslint-disable-next-line 
             console.log(res);
+            state.orderItems = []
         })
         // eslint-disable-next-line 
         .catch(error => console.log(error))
@@ -80,11 +79,13 @@ const actions = {
     },
     addTable: ({commit}, tableInfo) => {
         commit('ADD_TABLE', tableInfo);
+        firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
+            commit('ORDER', idToken);
+          }).catch(function(error) {
+            // eslint-disable-next-line
+            console.log(error)
+          });
         router.push('/bestellung');
-        commit('ORDER');
-        commit('CLEAR_STATE')
-
-
     },
     saveUserId: ({commit}, idToken) => {
         commit('SET_UID', idToken)

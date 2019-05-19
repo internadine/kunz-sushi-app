@@ -67,7 +67,10 @@
     methods: {
       getTableData() {
         axios.get(
-            `https://kunz-sushi-35c35.firebaseio.com/orderItem.json?orderBy="table"&equalTo="${this.table}"`
+            `https://kunz-sushi-35c35.firebaseio.com/orderItem.json?orderBy="table"&equalTo="${this.table}"`,  {
+            params: {
+              auth: this.$store.getters.serveToken
+            }}
           )
           .then(response => {
             const data = response.data
@@ -109,7 +112,10 @@
           options: el.options,
           status: 'paid'
         }
-          axios.put(`https://kunz-sushi-35c35.firebaseio.com/orderItem/${el.dbID}.json`, paidOrder)
+          axios.put(`https://kunz-sushi-35c35.firebaseio.com/orderItem/${el.dbID}.json`, paidOrder,  {
+            params: {
+              auth: this.$store.getters.serveToken
+            }},)
             .then(response => {
               // eslint-disable-next-line
             console.log(response);

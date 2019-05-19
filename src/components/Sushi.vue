@@ -29,7 +29,10 @@
       }
     },
     created() {
-      axios.get('https://kunz-sushi-35c35.firebaseio.com/orderItem.json?orderBy="type"&equalTo="sushi"')
+      axios.get('https://kunz-sushi-35c35.firebaseio.com/orderItem.json?orderBy="type"&equalTo="sushi"', {
+            params: {
+              auth: this.$store.getters.serveToken
+            }})
         .then(response => {
           const data = response.data
           let order = []
@@ -64,11 +67,17 @@
           options: options,
           party: party
         };
-        axios.put(`https://kunz-sushi-35c35.firebaseio.com/orderItem/${dbID}.json`, doneSushi)
+        axios.put(`https://kunz-sushi-35c35.firebaseio.com/orderItem/${dbID}.json`, doneSushi, {
+            params: {
+              auth: this.$store.getters.serveToken
+            }})
           .then(res => {
             // eslint-disable-next-line
             console.log(res)
-            axios.get('https://kunz-sushi-35c35.firebaseio.com/orderItem.json?orderBy="type"&equalTo="sushi"')
+            axios.get('https://kunz-sushi-35c35.firebaseio.com/orderItem.json?orderBy="type"&equalTo="sushi"', {
+            params: {
+              auth: this.$store.getters.serveToken
+            }})
               .then(response => {
                 const data = response.data
                 let order = []
