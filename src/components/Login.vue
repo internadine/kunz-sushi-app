@@ -20,46 +20,37 @@
 
                     </form>
                 </div>
-
-
-
             </div>
             <div class="col-2"></div>
         </div>
-
-
     </div>
 
 </template>
 
 
 <script>
-import firebase from 'firebase'
-import 'firebase/auth'
+    import firebase from 'firebase/app'
+    import 'firebase/auth'
 
-export default {
-    Name: 'Login', 
-    data() {
-        return {
-            email: '',
-            password: ''
-        }
-    },
-    methods: {
-        onSubmit() {
-            const auth = firebase.auth()
-            auth.signInWithEmailAndPassword(this.email, this.password).then(cred => {
-                // eslint-disable-next-line
-                console.log(cred.user.uid)
-                this.$store.dispatch('saveUserId', cred.user.uid)
-                this.$router.push("/bestellung")
+    export default {
+        Name: 'Login',
+        data() {
+            return {
+                email: '',
+                password: ''
             }
-                 
-           
-            )
+        },
+        methods: {
+            onSubmit() {
+                const auth = firebase.auth()
+                auth.signInWithEmailAndPassword(this.email, this.password).then(cred => {
+                    console.log(cred.user.ra)
+                    this.$store.dispatch('saveUserId', cred.user.ra)
+                    this.$router.push("/bestellung")
+                    }
+                )
+            }
+
+        }
     }
-
-}
-}
 </script>
-

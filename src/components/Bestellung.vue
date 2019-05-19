@@ -19,10 +19,7 @@
           <Item v-for="(item, index) in menu" :key="index" :item ="item" :selection="selection"></Item>
       </ul>
       
-      <router-link to="/tisch"><i class="fas fa-check-circle fa-4x text-info mt-5"></i></router-link>
-
-
-    
+      <router-link to="/tisch"><i class="fas fa-check-circle fa-4x text-info mt-5"></i></router-link>   
   </div>
 
 
@@ -42,13 +39,14 @@
       return {
         menu: [],
         selection: 'drinks',
-        attachBG: false,
+        attachBG: false
       }
-    },
-  
-
+    }, 
     created() {
-      axios.get('https://kunz-sushi-35c35.firebaseio.com/menu.json')
+      axios.get('https://kunz-sushi-35c35.firebaseio.com/menu.json', {
+            params: {
+              auth: this.$store.getters.serveToken
+            }})
         .then(response => {
           const data = response.data
           const menu = []

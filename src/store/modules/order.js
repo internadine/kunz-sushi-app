@@ -3,7 +3,6 @@ import { router } from '../../main';
 import axios from 'axios';
 
 
-
 const state = {
     orderItems: [],
     doneSushi: [],
@@ -15,7 +14,10 @@ const getters = {
         return state.orderItems
     },
     getTableInfo() {
-        axios.get('https://kunz-sushi-35c35.firebaseio.com/orderItem.json')
+        axios.get('https://kunz-sushi-35c35.firebaseio.com/orderItem.json', {
+            params: {
+              auth: state.UserID
+            }})
         .then(response => {
             state.orderItems = response.data
         })
@@ -26,6 +28,7 @@ const getters = {
         }
         
     },
+    serveToken: (state) => state.UserID
 
     
 }; 
