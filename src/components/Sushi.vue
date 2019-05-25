@@ -7,7 +7,8 @@
     >
       <div class="d-flex flex-row justify-content-between">
         <div class="p-2 ">
-          <h4>Tisch {{item.table}}</h4>
+          <h4>T {{item.table}} </h4>
+          <div class="text-muted">{{item.party}}</div>
         </div>
         <div class="p-2 ">
           <h4> <span
@@ -27,6 +28,11 @@
         </div>
       </div>
     </div>
+    <div class="container text-right"><i
+        class="fas fa-download fa-3x text-info mt-5"
+        @click="fetchSushi"
+      ></i></div>
+
   </div>
 </template>
 
@@ -68,6 +74,32 @@ export default {
       });
   },
   methods: {
+    fetchSushi() {
+      this.$store.dispatch("refreshToken");
+      axios
+        .get(
+          'https://kunz-sushi-35c35.firebaseio.com/orderItem.json?orderBy="type"&equalTo="sushi"',
+          {
+            params: {
+              auth: this.$store.getters.serveToken
+            }
+          }
+        )
+        .then(response => {
+          const data = response.data;
+          let order = [];
+          for (const key in data) {
+            let item = data[key];
+            item = _.extend(item, {
+              dbID: key
+            });
+            item.id = data[key];
+            order.push(item);
+          }
+          order = _.sortBy(order, "orderTime");
+          this.sushi = order;
+        });
+    },
     setToDone(
       dbID,
       name,

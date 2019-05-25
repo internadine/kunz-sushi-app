@@ -34,7 +34,13 @@
         @getGroup="calcSplitPrice"
       ></bezahl-item>
     </ul>
-
+    <div
+      v-if="order.length < 1 && table !== null"
+      class="alert alert-info mt-5"
+      role="alert"
+    >
+      An Tisch {{table}} ist keine Rechnung mehr offen.
+    </div>
     <ul
       class="list-group p2 shadow text-info mt-5 "
       v-if="splitSum"
@@ -57,7 +63,10 @@
       </li>
     </ul>
 
-    <div class="container text-right mt-5"><button
+    <div
+      v-if="order.length > 0"
+      class="container text-right mt-5"
+    ><button
         class="btn-lg btn-info shadow "
         @click="setStatus"
       >Bezahlt</button>

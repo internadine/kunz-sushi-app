@@ -5,15 +5,30 @@
     class="list-group-item text-left"
   >
     <div
+      class="alert alert-info alert-dismissible fade show"
+      role="alert"
+      v-if="success"
+    >
+      Gemerkt!
+      <button
+        type="button"
+        class="close"
+        data-dismiss="alert"
+        aria-label="Close"
+        @click="resetSuccess"
+      >
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div
       class="p-2 bd-highlight"
       style="color: #990000"
     >{{item.name}} <small class="text-info ml-3"> {{item.price}}
         Euro </small></div>
     <div
       v-if="item.options"
-      class="p-2 bd-highlight"
-      style="color: #990000"
-    > Füllung:
+      class="p-2 bd-highlight text-muted"
+    > mit
       <small
         class="ml-4 text-info"
         v-for="(item, index) in filling"
@@ -26,16 +41,12 @@
         @change="order"
         v-model="quantity"
       >
-        <option>0</option>
+        <option disabled> 0</option>
         <option>1</option>
         <option>2</option>
         <option>3</option>
         <option>4</option>
         <option>5</option>
-        <option>6</option>
-        <option>7</option>
-        <option>8</option>
-        <option>9</option>
       </select>
 
     </div>
@@ -68,7 +79,8 @@ export default {
       attachBG: false,
       quantity: 0,
       markClicked: false,
-      filling: []
+      filling: [],
+      success: false
     };
   },
   methods: {
@@ -98,12 +110,18 @@ export default {
       // eslint-disable-next-line
       console.log(orderItem);
       this.$store.dispatch("updateOrderItems", orderItem);
+      this.success = true;
+      this.filling = [];
+      this.quantity = 0;
     },
     selectFilling(option) {
       this.filling.push(option);
     },
     remove(index) {
       this.filling.splice(index, 1);
+    },
+    resetSuccess() {
+      this.success = false;
     }
   }
 };

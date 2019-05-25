@@ -1,4 +1,5 @@
 <template>
+
   <div class="container text-center mt-5">
 
     <!-- Choose type of Menu-Item -->
@@ -28,18 +29,34 @@
         Sushi</button>
     </div>
 
+    <div class="input-group shadow my-3">
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Suche"
+        v-model="search"
+      >
+      <div class="input-group-prepend">
+        <button
+          class="btn-info"
+          type="button"
+          @click="table"
+        >Bestellen</button>
+      </div>
+    </div>
+
     <!-- List of Menu Items -->
 
     <ul class="list-group shadow p-2 text-info">
       <Item
-        v-for="(item, index) in menu"
+        v-for="(item, index) in searchMenu"
         :key="index"
         :item="item"
         :selection="selection"
       ></Item>
     </ul>
 
-    <router-link to="/tisch"><i class="fas fa-check-circle fa-4x text-info mt-5"></i></router-link>
+    <router-link to="/tisch"><button class="btn-lg btn-info mt-3 shadow">Bestellen</button></router-link>
   </div>
 
 </template>
@@ -58,7 +75,8 @@ export default {
     return {
       menu: [],
       selection: "drinks",
-      attachBG: false
+      attachBG: false,
+      search: ""
     };
   },
   created() {
@@ -79,6 +97,18 @@ export default {
         }
         this.menu = menu;
       });
+  },
+  computed: {
+    searchMenu() {
+      return this.menu.filter(item => {
+        return item.name.match(this.search);
+      });
+    }
+  },
+  methods: {
+    table() {
+      this.$router.push("/tisch");
+    }
   }
 };
 </script>
