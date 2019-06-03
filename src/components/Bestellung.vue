@@ -29,27 +29,11 @@
         Sushi</button>
     </div>
 
-    <div class="input-group shadow my-3">
-      <input
-        type="text"
-        class="form-control"
-        placeholder="Suche"
-        v-model="search"
-      >
-      <div class="input-group-prepend">
-        <button
-          class="btn-info"
-          type="button"
-          @click="table"
-        >Bestellen</button>
-      </div>
-    </div>
-
     <!-- List of Menu Items -->
 
     <ul class="list-group shadow p-2 text-info">
       <Item
-        v-for="(item, index) in searchMenu"
+        v-for="(item, index) in menu"
         :key="index"
         :item="item"
         :selection="selection"
