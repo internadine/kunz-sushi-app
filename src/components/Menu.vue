@@ -95,14 +95,40 @@
                 <input
                   class="form-check-input"
                   type="radio"
-                  id="drinks"
-                  value="drinks"
+                  id="sonstige"
+                  value="sonstige"
+                  v-model="type"
+                >
+                <label
+                  class="form-check-label"
+                  for="sonstige"
+                >Alkoholfrei</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  id="bier"
+                  value="bier"
                   v-model="type"
                 >
                 <label
                   class="form-check-label"
                   for="drinks"
-                >Getränk</label>
+                >Bier</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  id="wein"
+                  value="wein"
+                  v-model="type"
+                >
+                <label
+                  class="form-check-label"
+                  for="drinks"
+                >Wein</label>
               </div>
               <div class="form-check form-check-inline">
                 <input
@@ -174,7 +200,7 @@
                 >Garnele</label>
               </div>
             </div>
-
+            <hr>
             <div class="container">
               <div class="form-check form-check-inline">
                 <input

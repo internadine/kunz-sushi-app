@@ -5,14 +5,14 @@
     <!-- Choose type of Menu-Item -->
 
     <div
-      class="btn-group shadow mb-3"
+      class="btn-group shadow mb-2"
       role="group"
       aria-label="Basic example"
     >
       <button
         type="button"
         class="btn btn-info"
-        @click="selection = 'drinks'"
+        @click="selection = 'sonstige'"
       ><i class="fas fa-wine-bottle"></i>
         Getränke</button>
       <button
@@ -27,6 +27,34 @@
         @click="selection = 'sushi'"
       > <i class="fas fa-fish"></i>
         Sushi</button>
+    </div>
+
+    <hr />
+
+    <div
+      v-if="selection === 'sonstige' || selection === 'bier' | selection === 'wein'"
+      class="btn-group shadow mb-3"
+      role="group"
+      aria-label="Basic example"
+    >
+      <button
+        type="button"
+        class="btn btn-info"
+        @click="selection = 'sonstige'"
+      ><i class="fas fa-coffee"></i>
+        Ohne Alk.</button>
+      <button
+        type="button"
+        class="btn btn-info"
+        @click="selection = 'bier'"
+      ><i class="fas fa-beer"></i>
+        Bier</button>
+      <button
+        type="button"
+        class="btn btn-info"
+        @click="selection = 'wein'"
+      > <i class="fas fa-wine-glass"></i>
+        Wein </button>
     </div>
 
     <!-- List of Menu Items -->
@@ -58,7 +86,7 @@ export default {
   data() {
     return {
       menu: [],
-      selection: "drinks",
+      selection: "sonstige",
       attachBG: false,
       search: ""
     };

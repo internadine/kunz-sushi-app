@@ -14,7 +14,7 @@
           <h4> <span
               style="color: #990000"
               class="ml-2"
-            >{{item.name}}</span> </h4>
+            >{{item.name}} ({{item.quantity}}x)</span> </h4>
         </div>
         <div
           class="p-2 text-muted"

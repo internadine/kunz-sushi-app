@@ -33,7 +33,7 @@
         class="ml-4 text-info"
         v-for="(item, index) in filling"
         :key="index"
-        @click="remove(index)"
+        @click="remove(index, item)"
       > {{item}} </small> </div>
     <div class="p-2 bd-hightlight">
       <select
@@ -42,11 +42,17 @@
         v-model="quantity"
       >
         <option disabled> 0</option>
-        <option>1</option>
-        <option>2</option>
-        <option>3</option>
-        <option>4</option>
-        <option>5</option>
+        <option
+          v-for="(number, index) in standard"
+          :key="index"
+        >{{number}}</option>
+
+        <option v-if="item.name ==='Nigiri' || item.name === 'Temaki' || item.name === 'Roses'">6</option>
+        <option v-if="item.name ==='Nigiri' || item.name === 'Temaki' || item.name === 'Roses'">7</option>
+        <option v-if="item.name ==='Nigiri' || item.name === 'Temaki' || item.name === 'Roses'">8</option>
+        <option v-if="item.name ==='Nigiri' || item.name === 'Temaki' || item.name === 'Roses'">9</option>
+        <option v-if="item.name ==='Nigiri' || item.name === 'Temaki' || item.name === 'Roses'">10</option>
+
       </select>
 
     </div>
@@ -60,7 +66,7 @@
         class="ml-4 text-muted"
         v-for="(option, index) in item.options"
         :key="index"
-        @click="selectFilling(option)"
+        @click="selectFilling(option, index)"
       >
         {{option}} </small>
 
@@ -80,7 +86,8 @@ export default {
       quantity: 0,
       markClicked: false,
       filling: [],
-      success: false
+      success: false,
+      standard: [1, 2, 3, 4, 5]
     };
   },
   methods: {
@@ -114,11 +121,13 @@ export default {
       this.filling = [];
       this.quantity = 0;
     },
-    selectFilling(option) {
+    selectFilling(option, index) {
       this.filling.push(option);
+      this.item.options.splice(index, 1);
     },
-    remove(index) {
+    remove(index, ingredient) {
       this.filling.splice(index, 1);
+      this.item.options.push(ingredient);
     },
     resetSuccess() {
       this.success = false;
