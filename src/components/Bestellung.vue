@@ -110,13 +110,7 @@ export default {
         this.menu = menu;
       });
   },
-  computed: {
-    searchMenu() {
-      return this.menu.filter(item => {
-        return item.name.match(this.search);
-      });
-    }
-  },
+
   methods: {
     table() {
       this.$router.push("/tisch");

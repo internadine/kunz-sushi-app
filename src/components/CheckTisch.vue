@@ -1,0 +1,98 @@
+<template>
+  <div class="container text-info">
+    <h1 class="text-center mt-5 text-info">Tisch {{table}}</h1>
+
+    <div class="form-group mt-4 ">
+      <label for="tisch">Tisch auswählen</label>
+      <select
+        class="form-control shadow"
+        id="tisch"
+        v-model="table"
+        @change="getTableData"
+      >
+        <option>1</option>
+        <option>2</option>
+        <option>3</option>
+        <option>4</option>
+        <option>5</option>
+        <option>6</option>
+        <option>7</option>
+        <option>8</option>
+        <option>9</option>
+        <option>10</option>
+        <option disabled> -- </option>
+        <option>30</option>
+        <option>31</option>
+        <option>32</option>
+        <option>33</option>
+        <option>34</option>
+        <option>35</option>
+      </select>
+    </div>
+
+    <ul
+      class="list-group p2 shadow text-info mt-5"
+      v-if="order.length > 0"
+    >
+      <Check
+        v-for="(item, index) in order"
+        :key="index"
+        :tableOrder="item"
+      ></Check>
+    </ul>
+    <div class="container text-right">
+      <router-link to="/bestellung"><i class="fas fa-plus mt-3 text-info fa-3x"></i></router-link>
+    </div>
+
+  </div>
+</template>
+
+<script>
+import axios from "axios";
+import _ from "underscore";
+import Check from "./CheckTischItem";
+export default {
+  name: "CheckTisch",
+  data() {
+    return {
+      table: "",
+      party: "",
+      order: []
+    };
+  },
+  components: {
+    Check
+  },
+  methods: {
+    getTableData() {
+      this.$store.dispatch("refreshToken");
+      axios
+        .get(
+          `https://kunz-sushi-35c35.firebaseio.com/orderItem.json?orderBy="table"&equalTo="${
+            this.table
+          }"`,
+          {
+            params: {
+              auth: this.$store.getters.serveToken
+            }
+          }
+        )
+        .then(response => {
+          const data = response.data;
+          let order = [];
+          for (const key in data) {
+            let item = data[key];
+            item = _.extend(item, {
+              dbID: key
+            });
+            item.id = data[key];
+            order.push(item);
+          }
+          order = _.sortBy(order, "orderTime");
+          this.order = order;
+          console.log(this.order);
+        });
+    }
+  }
+};
+</script>

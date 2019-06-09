@@ -1,6 +1,6 @@
 <template>
   <div class="container text-center text-info">
-    <h2 class="mt-5">Neue Gerichte anlegen</h2>
+    <h2 class="mt-5">Karte bearbeiten</h2>
     <div class="row mt-5 text-left ">
       <div class="col-2"></div>
       <div class="col-8 ">
@@ -37,6 +37,7 @@
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
+
           <form
             @submit.prevent="onSubmit"
             id="menuForm"
@@ -258,10 +259,54 @@
 
             <button
               type="submit"
-              class="btn btn-lg btn-secondary mt-5"
+              class="btn btn-lg btn-info mt-5"
             >Anlegen</button>
 
           </form>
+
+          <hr>
+          <div
+            class="alert alert-success alert-dismissible fade show"
+            role="alert"
+            v-if="deleted"
+          >
+            <strong>Super! </strong> Das neue Gericht ist gelöscht.
+            <button
+              type="button"
+              class="close"
+              data-dismiss="alert"
+              aria-label="Close"
+              @click="resetDeleted"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div>
+
+          </div>
+
+          <form
+            @submit.prevent="onSearch"
+            class="mt-5"
+            action=""
+          >
+            <div class="form-group">
+              <label for="number">Gericht löschen</label>
+              <input
+                type="text"
+                name=""
+                id="search"
+                placeholder="Name des Gerichts"
+                class="form-control"
+                v-model="searchItem"
+              >
+            </div>
+            <button
+              type="submit"
+              class="btn btn-lg btn-danger mt-3"
+            >Gericht löschen</button>
+          </form>
+
         </div>
 
       </div>
@@ -274,6 +319,7 @@
 
 <script>
 import axios from "axios";
+import _ from "underscore";
 export default {
   name: "Menu-Form",
   data() {
@@ -285,10 +331,53 @@ export default {
       options: [],
       type: "",
       success: false,
-      error: false
+      error: false,
+      searchItem: "",
+      deleted: false
     };
   },
   methods: {
+    onSearch() {
+      this.$store.dispatch("refreshToken");
+      axios
+        .get(
+          `https://kunz-sushi-35c35.firebaseio.com/menu.json?orderBy="name"&equalTo="${
+            this.searchItem
+          }"`,
+          {
+            params: {
+              auth: this.$store.getters.serveToken
+            }
+          }
+        )
+
+        .then(response => {
+          const data = response.data;
+          let Item = [];
+          for (const key in data) {
+            let item = data[key];
+            item = _.extend(item, {
+              dbID: key
+            });
+            axios.delete(
+              `https://kunz-sushi-35c35.firebaseio.com/menu/${item.dbID}.json`,
+              {
+                params: {
+                  auth: this.$store.getters.serveToken
+                }
+              }
+            );
+          }
+        })
+        .then(res => {
+          this.deleted = true;
+        })
+        .catch(error => {
+          // eslint-disable-next-line
+          console.log(error);
+        });
+    },
+
     onSubmit() {
       const formData = {
         number: this.number,
@@ -324,6 +413,9 @@ export default {
     },
     resetError() {
       this.error = false;
+    },
+    resetDeleted() {
+      this.deleted = false;
     },
     clearForm() {
       (this.number = null),
