@@ -353,7 +353,6 @@ export default {
 
         .then(response => {
           const data = response.data;
-          let Item = [];
           for (const key in data) {
             let item = data[key];
             item = _.extend(item, {
@@ -369,9 +368,7 @@ export default {
             );
           }
         })
-        .then(res => {
-          this.deleted = true;
-        })
+        .then((this.deleted = true))
         .catch(error => {
           // eslint-disable-next-line
           console.log(error);

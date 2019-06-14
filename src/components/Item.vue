@@ -52,6 +52,11 @@
         <option v-if="item.name ==='Nigiri' || item.name === 'Temaki' || item.name === 'Roses'">8</option>
         <option v-if="item.name ==='Nigiri' || item.name === 'Temaki' || item.name === 'Roses'">9</option>
         <option v-if="item.name ==='Nigiri' || item.name === 'Temaki' || item.name === 'Roses'">10</option>
+        <option v-if="item.name ==='Nigiri' || item.name === 'Temaki' || item.name === 'Roses'">11</option>
+        <option v-if="item.name ==='Nigiri' || item.name === 'Temaki' || item.name === 'Roses'">12</option>
+        <option v-if="item.name ==='Nigiri' || item.name === 'Temaki' || item.name === 'Roses'">13</option>
+        <option v-if="item.name ==='Nigiri' || item.name === 'Temaki' || item.name === 'Roses'">14</option>
+        <option v-if="item.name ==='Nigiri' || item.name === 'Temaki' || item.name === 'Roses'">15</option>
 
       </select>
 
@@ -118,7 +123,6 @@ export default {
       console.log(orderItem);
       this.$store.dispatch("updateOrderItems", orderItem);
       this.success = true;
-      this.filling = [];
       this.quantity = 0;
     },
     selectFilling(option, index) {
@@ -131,6 +135,8 @@ export default {
     },
     resetSuccess() {
       this.success = false;
+      this.item.options = this.filling.concat(this.item.options);
+      this.filling = [];
     }
   }
 };

@@ -38,8 +38,16 @@
         v-for="(item, index) in order"
         :key="index"
         :tableOrder="item"
+        @checked="checked"
+        @unchecked="unchecked"
       ></Check>
     </ul>
+    <div class="container text-center"><button
+        class="btn-lg btn-info mt-3 shadow"
+        @click="rememberStatus"
+      >Merken!</button>
+    </div>
+
     <div class="container text-right">
       <router-link to="/bestellung"><i class="fas fa-plus mt-3 text-info fa-3x"></i></router-link>
     </div>
@@ -57,7 +65,8 @@ export default {
     return {
       table: "",
       party: "",
-      order: []
+      order: [],
+      checkedID: []
     };
   },
   components: {
@@ -92,6 +101,61 @@ export default {
           this.order = order;
           console.log(this.order);
         });
+    },
+    checked(dbID) {
+      this.checkedID.push(dbID);
+    },
+    unchecked(dbID) {
+      this.checkedID = this.checkedID.filter(id => {
+        return id !== dbID;
+      });
+    },
+    rememberStatus() {
+      var today = new Date();
+      var date =
+        today.getFullYear() +
+        "-" +
+        (today.getMonth() + 1) +
+        "-" +
+        today.getDate();
+      var time = today.getHours() + ":" + today.getMinutes();
+      var dateTime = date + " " + time;
+      this.checkedID.forEach(id => {
+        this.order.forEach(el => {
+          if (el.dbID === id) {
+            var checkedItem = {
+              name: el.name,
+              options: el.options,
+              orderTime: el.orderTime,
+              party: el.party,
+              price: el.price,
+              quantity: el.quantity,
+              status: "checked",
+              table: el.table,
+              type: el.type,
+              checkedTime: dateTime
+            };
+            axios
+              .put(
+                `https://kunz-sushi-35c35.firebaseio.com/orderItem/${
+                  el.dbID
+                }.json`,
+                checkedItem,
+                {
+                  params: {
+                    auth: this.$store.getters.serveToken
+                  }
+                }
+              )
+              .then(res => {
+                // eslint-disable-next-line
+                console.log(res);
+              })
+              // eslint-disable-next-line
+              .catch(error => console.log(error));
+          }
+        });
+      });
     }
   }
 };

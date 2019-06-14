@@ -6,7 +6,7 @@
         class="p-2 bd-highlight"
         style="color: #990000 "
         :class="{checked: attachLine}"
-        @click="attachLine = !attachLine"
+        @click="markChecked(tableOrder.dbID)"
       >{{tableOrder.name}}</div>
       <div class="p-2 bd-highlight text-muted">{{tableOrder.party}}</div>
       <div
@@ -26,8 +26,25 @@ export default {
   props: ["tableOrder"],
   data() {
     return {
-      attachLine: false
+      attachLine: false,
+      fixLine: false
     };
+  },
+  created() {
+    if (this.tableOrder.status === "checked") {
+      this.attachLine = true;
+    }
+  },
+
+  methods: {
+    markChecked(dbID) {
+      this.attachLine = !this.attachLine;
+      if (this.attachLine == true) {
+        this.$emit("checked", dbID);
+      } else {
+        this.$emit("unchecked", dbID);
+      }
+    }
   }
 };
 </script>
@@ -35,5 +52,8 @@ export default {
 <style scoped>
 .checked {
   text-decoration: line-through;
+}
+.fixLine {
+  text-decoration-color: gray;
 }
 </style>
