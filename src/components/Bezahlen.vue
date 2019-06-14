@@ -39,6 +39,8 @@
         :key="index"
         :pay="item"
         @getGroup="calcSplitPrice"
+        @getSubtotal="calcSubtotal"
+        @deleteItem="deleteItem"
       ></bezahl-item>
     </ul>
     <div
@@ -58,6 +60,10 @@
           v-if="order.length > 0"
         >Summe in Euro ({{payParty}}) </div>
         <div class="p-2 bd-highlight ml-auto p-2">{{splitSum}}</div>
+        <div
+          class="p-2 bd-highlight  p-2"
+          @click="reloadSum"
+        ><i class="fas fa-sync"></i></div>
       </li>
     </ul>
     <ul
@@ -78,6 +84,22 @@
         @click="setStatus"
       >Bezahlt</button>
     </div>
+    <div v-if="subTotalItems.length > 0">
+      <ul class="list-group list-group-flush mt-3">
+        <li
+          class="list-group-item text-info"
+          v-for="(item, index) in subTotalItems"
+          :key="index"
+        >{{item}}</li>
+        <li class="list-group-item text-info"> <strong style="color: #990000">Zwischensumme: {{subTotal}} € </strong></li>
+
+      </ul>
+      <div
+        class="text-right mt-3"
+        @click="clearSubtotal"
+      ><i class="fas fa-check text-info fa-2x"></i></div>
+
+    </div>
 
   </div>
 </template>
@@ -95,7 +117,9 @@ export default {
       order: [],
       sum: null,
       splitSum: null,
-      payParty: ""
+      payParty: "",
+      subTotal: null,
+      subTotalItems: []
     };
   },
   components: {
@@ -103,6 +127,7 @@ export default {
   },
   methods: {
     getTableData() {
+      this.splitSum = null;
       axios
         .get(
           `https://kunz-sushi-35c35.firebaseio.com/orderItem.json?orderBy="table"&equalTo="${
@@ -135,7 +160,7 @@ export default {
               priceArray.push(parseFloat(el.price * el.quantity));
             });
             sum = priceArray.reduce((total, amount) => total + amount);
-            this.sum = sum;
+            this.sum = sum.toFixed(2);
             this.order = order;
           }
         });
@@ -151,7 +176,6 @@ export default {
             doneTime: el.doneTime,
             options: el.options,
             type: el.type,
-            table: el.table,
             status: "paid"
           };
           axios
@@ -186,6 +210,21 @@ export default {
           this.payParty = payParty;
         }
       });
+    },
+    calcSubtotal(payItem, payPrice) {
+      this.subTotalItems.push(payItem);
+      this.subTotal += payPrice;
+    },
+    clearSubtotal() {
+      this.subTotalItems = [];
+      this.subTotal = null;
+    },
+    deleteItem(price) {
+      this.sum = this.sum - price;
+    },
+    reloadSum() {
+      this.splitSum = null;
+      this.payParty = "";
     }
   }
 };
