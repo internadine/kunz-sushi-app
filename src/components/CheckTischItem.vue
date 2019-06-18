@@ -13,7 +13,10 @@
         class="p-2 bd-highlight"
         style="color: #990000"
       >{{tableOrder.sum}}</div>
-      <div class="p-2 bd-highlight ml-auto">{{tableOrder.price}}</div>
+      <div
+        class="p-2 bd-highlight ml-auto"
+        @click="removeOrder(tableOrder.dbID)"
+      > <i class="fas fa-trash"></i></div>
 
     </li>
 
@@ -21,6 +24,7 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
   name: "Check",
   props: ["tableOrder"],
@@ -43,6 +47,19 @@ export default {
         this.$emit("checked", dbID);
       } else {
         this.$emit("unchecked", dbID);
+      }
+    },
+    removeOrder(dbID) {
+      if (confirm("Möchtest Du das wirklich löschen?")) {
+        this.$emit("removeOrder", dbID);
+        axios.delete(
+          `https://kunz-sushi-35c35.firebaseio.com/orderItem/${dbID}.json`,
+          {
+            params: {
+              auth: this.$store.getters.serveToken
+            }
+          }
+        );
       }
     }
   }

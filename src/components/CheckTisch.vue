@@ -10,24 +10,21 @@
         v-model="table"
         @change="getTableData"
       >
-        <option>1</option>
-        <option>2</option>
-        <option>3</option>
-        <option>4</option>
-        <option>5</option>
-        <option>6</option>
-        <option>7</option>
-        <option>8</option>
-        <option>9</option>
-        <option>10</option>
+
+        <option
+          v-for="(number, index) in tables"
+          :key="index"
+        >{{number}}</option>
         <option disabled> -- </option>
         <option>30</option>
-        <option>31</option>
-        <option>32</option>
-        <option>33</option>
-        <option>34</option>
-        <option>35</option>
       </select>
+    </div>
+    <div
+      v-if="order.length == 0 && table !== ''"
+      class="alert alert-info mt-5"
+      role="alert"
+    >
+      An Tisch {{table}} ist keine Bestellung gespeichert.
     </div>
 
     <ul
@@ -40,6 +37,7 @@
         :tableOrder="item"
         @checked="checked"
         @unchecked="unchecked"
+        @removeOrder="removeOrder"
       ></Check>
     </ul>
     <div class="container text-center"><button
@@ -66,7 +64,29 @@ export default {
       table: "",
       party: "",
       order: [],
-      checkedID: []
+      checkedID: [],
+      tables: [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        19,
+        19,
+        20
+      ]
     };
   },
   components: {
@@ -108,6 +128,11 @@ export default {
     unchecked(dbID) {
       this.checkedID = this.checkedID.filter(id => {
         return id !== dbID;
+      });
+    },
+    removeOrder(dbID) {
+      this.order = this.order.filter(el => {
+        return el.dbID != dbID;
       });
     },
     rememberStatus() {
