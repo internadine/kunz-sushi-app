@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <h1 class="text-center mt-5 text-info">Tisch {{table}}</h1>
-
+    <!-- choose table  -->
     <div class="form-group mt-4 text-info">
       <label for="tisch">Tisch auswählen</label>
       <select
@@ -20,7 +20,7 @@
 
       </select>
     </div>
-
+    <!-- list with pay items -->
     <ul
       class="list-group p2 shadow text-info mt-5"
       v-if="order.length > 0"
@@ -34,6 +34,8 @@
         @deleteItem="deleteItem"
       ></bezahl-item>
     </ul>
+
+    <!-- alert, if table is empty -->
     <div
       v-if="order.length < 1 && table !== null"
       class="alert alert-info mt-5"
@@ -41,6 +43,7 @@
     >
       An Tisch {{table}} ist keine Rechnung mehr offen.
     </div>
+
     <ul
       class="list-group p2 shadow text-info mt-5 "
       v-if="splitSum"
@@ -59,7 +62,7 @@
     </ul>
     <ul
       class="list-group p2 shadow text-info mt-5"
-      v-if="order.length > 0 && splitSum ==null"
+      v-if="order.length > 0 && splitSum === null"
     >
       <li class="d-flex bd-highlight list-group-item">
         <div class="p-2 bd-highlight">Summe in Euro (Gesamt) </div>
@@ -96,9 +99,8 @@
 </template>
 
 <script>
-import axios from "axios";
-import _ from "underscore";
 import BezahlItem from "./BezahlItem.vue";
+import db from "./firebaseinit";
 
 export default {
   name: "Bezahlen",
@@ -141,79 +143,62 @@ export default {
   methods: {
     getTableData() {
       this.splitSum = null;
-      axios
-        .get(
-          `https://kunz-sushi-35c35.firebaseio.com/orderItem.json?orderBy="table"&equalTo="${
-            this.table
-          }"`,
-          {
-            params: {
-              auth: this.$store.getters.serveToken
-            }
-          }
-        )
-        .then(response => {
-          const data = response.data;
-          let order = [];
-          const priceArray = [];
-          let sum = null;
-          for (const key in data) {
-            let item = data[key];
-            item = _.extend(item, {
-              dbID: key
+      db.collection("orderItems")
+        .where("table", "==", this.table)
+        .get()
+        .then(res => {
+          res.forEach(doc => {
+            var data = doc.data();
+            data.id = doc.id;
+            this.order.push(data);
+          });
+          if (this.order.length > 0) {
+            this.order.forEach(el => {
+              this.sum = this.sum + parseFloat(el.price * el.quantity);
             });
-            item.id = data[key];
-            order.push(item);
           }
-          if (order.length < 1 || order == undefined) {
-            this.order = [];
-            this.$router.push("/bezahlen");
-          } else {
-            order.forEach(el => {
-              priceArray.push(parseFloat(el.price * el.quantity));
-            });
-            sum = priceArray.reduce((total, amount) => total + amount);
-            this.sum = sum.toFixed(2);
-            this.order = order;
+          if (this.sum) {
+            this.sum = this.sum.toFixed(2);
           }
         });
     },
     setStatus() {
+      var today = new Date();
+      var date =
+        today.getFullYear() +
+        "-" +
+        (today.getMonth() + 1) +
+        "-" +
+        today.getDate();
+      var time = today.getHours() + ":" + today.getMinutes();
+      var dateTime = date + " " + time;
       this.order.forEach(el => {
         if (this.payParty == el.party || this.payParty == "") {
+          if (!el.doneTime) {
+            el.doneTime = dateTime;
+          }
+          if (!el.checkedTime) {
+            el.checkedTime = dateTime;
+          }
           const paidOrder = {
             name: el.name,
             price: el.price,
             quantity: el.quantity,
             orderTime: el.orderTime,
-            doneTime: el.doneTime,
             options: el.options,
             type: el.type,
-            status: "paid"
+            doneTime: el.doneTime,
+            checkedTime: el.checkedTime
           };
-          axios
-            .put(
-              `https://kunz-sushi-35c35.firebaseio.com/orderItem/${
-                el.dbID
-              }.json`,
-              paidOrder,
-              {
-                params: {
-                  auth: this.$store.getters.serveToken
-                }
-              }
-            )
-            .then(response => {
-              // eslint-disable-next-line
-              console.log(response);
-            })
-            .catch(err => {
-              // eslint-disable-next-line
-              console.log(err);
-            });
+          db.collection("orderItems")
+            .doc(el.id)
+            .delete();
+          db.collection("History").add(paidOrder);
         }
       });
-      this.$router.push("/bestellung");
+      this.table = null;
+      this.order = [];
+      this.sum = null;
     },
     calcSplitPrice(payParty) {
       this.splitSum = null;
@@ -223,6 +208,7 @@ export default {
           this.payParty = payParty;
         }
       });
+      this.splitSum = this.splitSum.toFixed(2);
     },
     calcSubtotal(payItem, payPrice) {
       this.subTotalItems.push(payItem);
@@ -233,7 +219,8 @@ export default {
       this.subTotal = null;
     },
     deleteItem(price) {
-      this.sum = this.sum - price;
+      this.sum = this.sum - parseFloat(price);
+      this.sum = this.sum.toFixed(2);
     },
     reloadSum() {
       this.splitSum = null;

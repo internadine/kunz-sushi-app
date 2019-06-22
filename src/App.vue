@@ -1,24 +1,17 @@
 <template>
-    <div>
-        <AppHeader></AppHeader>
-        <Login v-if="!isLoggedIn"></Login>
-        <router-view v-else ></router-view>
-    </div>
+  <div>
+    <AppHeader></AppHeader>
+    <router-view></router-view>
+  </div>
 </template>
 
 <script>
-import AppHeader from './components/AppHeader';
-import Login from './components/Login'
-import { mapGetters} from 'vuex';
-
+import AppHeader from "./components/AppHeader";
 
 export default {
-    name: 'App', 
-    components: {
-        AppHeader,
-        Login
-
-    },
-    computed: mapGetters(['isLoggedIn']),
-}
+  name: "App",
+  components: {
+    AppHeader
+  }
+};
 </script>

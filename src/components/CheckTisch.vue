@@ -1,7 +1,7 @@
 <template>
   <div class="container text-info">
     <h1 class="text-center mt-5 text-info">Tisch {{table}}</h1>
-
+    <!-- select table -->
     <div class="form-group mt-4 ">
       <label for="tisch">Tisch auswählen</label>
       <select
@@ -10,7 +10,7 @@
         v-model="table"
         @change="getTableData"
       >
-
+        <!-- number of possible tables -->
         <option
           v-for="(number, index) in tables"
           :key="index"
@@ -19,6 +19,7 @@
         <option>30</option>
       </select>
     </div>
+    <!-- alert, if nothing is booked on the table -->
     <div
       v-if="order.length == 0 && table !== ''"
       class="alert alert-info mt-5"
@@ -26,7 +27,7 @@
     >
       An Tisch {{table}} ist keine Bestellung gespeichert.
     </div>
-
+    <!-- list all items that are booked on the table  -->
     <ul
       class="list-group p2 shadow text-info mt-5"
       v-if="order.length > 0"
@@ -40,6 +41,7 @@
         @removeOrder="removeOrder"
       ></Check>
     </ul>
+    <!-- remember status -->
     <div class="container text-center"><button
         class="btn-lg btn-info mt-3 shadow"
         @click="rememberStatus"
@@ -54,9 +56,9 @@
 </template>
 
 <script>
-import axios from "axios";
 import _ from "underscore";
 import Check from "./CheckTischItem";
+import db from "./firebaseinit";
 export default {
   name: "CheckTisch",
   data() {
@@ -94,31 +96,17 @@ export default {
   },
   methods: {
     getTableData() {
-      this.$store.dispatch("refreshToken");
-      axios
-        .get(
-          `https://kunz-sushi-35c35.firebaseio.com/orderItem.json?orderBy="table"&equalTo="${
-            this.table
-          }"`,
-          {
-            params: {
-              auth: this.$store.getters.serveToken
-            }
-          }
-        )
-        .then(response => {
-          const data = response.data;
-          let order = [];
-          for (const key in data) {
-            let item = data[key];
-            item = _.extend(item, {
-              dbID: key
-            });
-            item.id = data[key];
-            order.push(item);
-          }
-          order = _.sortBy(order, "orderTime");
-          this.order = order;
+      this.order = [];
+      db.collection("orderItems")
+        .where("table", "==", this.table)
+        .get()
+        .then(res => {
+          res.forEach(doc => {
+            var data = doc.data();
+            data.id = doc.id;
+            this.order.push(data);
+          });
+          this.order = _.sortBy(this.order, "orderTime");
           console.log(this.order);
         });
     },
@@ -132,7 +120,7 @@ export default {
     },
     removeOrder(dbID) {
       this.order = this.order.filter(el => {
-        return el.dbID != dbID;
+        return el.id != dbID;
       });
     },
     rememberStatus() {
@@ -147,7 +135,10 @@ export default {
       var dateTime = date + " " + time;
       this.checkedID.forEach(id => {
         this.order.forEach(el => {
-          if (el.dbID === id) {
+          if (el.id === id) {
+            if (!el.doneTime) {
+              el.doneTime = dateTime;
+            }
             var checkedItem = {
               name: el.name,
               options: el.options,
@@ -158,29 +149,19 @@ export default {
               status: "checked",
               table: el.table,
               type: el.type,
-              checkedTime: dateTime
+              checkedTime: dateTime,
+              doneTime: el.doneTime
             };
-            axios
-              .put(
-                `https://kunz-sushi-35c35.firebaseio.com/orderItem/${
-                  el.dbID
-                }.json`,
-                checkedItem,
-                {
-                  params: {
-                    auth: this.$store.getters.serveToken
-                  }
-                }
-              )
-              .then(res => {
-                // eslint-disable-next-line
-                console.log(res);
-              })
+            db.collection("orderItems")
+              .doc(el.id)
+              .set(checkedItem)
               // eslint-disable-next-line
               .catch(error => console.log(error));
           }
         });
       });
+      this.table = "";
+      this.order = [];
     }
   }
 };
