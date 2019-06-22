@@ -1,9 +1,11 @@
 <template>
 
+  <!-- show type of menu-item -->
   <li
     v-if="item.type == selection"
     class="list-group-item text-left"
   >
+    <!-- show "remembered"-alert -->
     <div
       class="alert alert-info alert-dismissible fade show"
       role="alert"
@@ -23,7 +25,7 @@
     <div
       class="p-2 bd-highlight"
       style="color: #990000"
-    >{{item.name}} <small class="text-info ml-3"> {{item.price}}
+    >{{item.name}} <small class="text-info ml-3"> {{parseFloat(item.price).toFixed(2)}}
         Euro </small></div>
     <div
       v-if="item.options"
@@ -42,11 +44,12 @@
         v-model="quantity"
       >
         <option disabled> 0</option>
+        <!-- standard number of items -->
         <option
           v-for="(number, index) in standard"
           :key="index"
         >{{number}}</option>
-
+        <!-- more items available for smaller items -->
         <option v-if="item.name ==='Nigiri' || item.name === 'Temaki' || item.name === 'Roses'">6</option>
         <option v-if="item.name ==='Nigiri' || item.name === 'Temaki' || item.name === 'Roses'">7</option>
         <option v-if="item.name ==='Nigiri' || item.name === 'Temaki' || item.name === 'Roses'">8</option>
@@ -66,7 +69,7 @@
       class="p-2 bd-highlight text-info"
       v-if="item.options"
     >
-
+      <!-- choose filling -->
       <small
         class="ml-4 text-muted"
         v-for="(option, index) in item.options"
@@ -87,7 +90,6 @@ export default {
   props: ["item", "selection"],
   data() {
     return {
-      attachBG: false,
       quantity: 0,
       markClicked: false,
       filling: [],
@@ -125,14 +127,17 @@ export default {
       this.success = true;
       this.quantity = 0;
     },
+    // select filling
     selectFilling(option, index) {
       this.filling.push(option);
       this.item.options.splice(index, 1);
     },
+    // remove filling
     remove(index, ingredient) {
       this.filling.splice(index, 1);
       this.item.options.push(ingredient);
     },
+    // reset choice
     resetSuccess() {
       this.success = false;
       this.item.options = this.filling.concat(this.item.options);

@@ -1,11 +1,15 @@
 <template>
   <div class="container text-info">
     <h1 class="text-center mt-5 text-info">Tisch {{table}}</h1>
+    <!-- start table form  -->
     <form @submit.prevent="addTable">
+      <!-- list of choosen items -->
       <tischAnsicht></tischAnsicht>
+      <!-- add more items to table -->
       <div class="container text-right">
         <router-link to="/bestellung"><i class="fas fa-plus mt-3 text-info fa-3x"></i></router-link>
       </div>
+      <!-- choose table -->
       <div class="form-group mt-4 ">
         <label for="tisch">Tisch auswählen</label>
         <select
@@ -21,6 +25,7 @@
           <option>30</option>
         </select>
       </div>
+      <!-- give party or group a name -->
       <div class="form-group mt-4">
         <label for="guests">Gäste / Gruppe</label>
         <input
@@ -36,12 +41,14 @@
         >Sollten mehrer Familien oder Gruppen an einem Tisch
           platznehmen, kann man hier Namen oder Nummern vergeben.</small>
       </div>
+      <!-- submit button  -->
       <div class="d-flex justify-content-center"><button
           class="btn btn-lg btn-info shadow mt-5 "
           type="submit"
         >Bestellung abschicken</button></div>
 
     </form>
+    <!-- end of form  -->
 
   </div>
 </template>
@@ -87,7 +94,6 @@ export default {
         table: this.table,
         party: this.party
       };
-      this.$store.dispatch("refreshToken");
       this.$store.dispatch("addTable", tableInfo);
     }
   }

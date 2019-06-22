@@ -5,6 +5,8 @@
       <div class="col-2"></div>
       <div class="col-8 ">
         <div class="container border rounded p-5 shadow">
+
+          <!-- Login form  -->
           <form @submit.prevent="onSubmit">
             <div class="form-group">
               <label for="email">Email Adresse</label>
@@ -35,6 +37,8 @@
             >Anmelden</button>
 
           </form>
+
+          <!-- End of Login form  -->
         </div>
       </div>
       <div class="col-2"></div>
@@ -46,7 +50,6 @@
 
 <script>
 import firebase from "firebase/app";
-import "firebase/auth";
 
 export default {
   Name: "Login",
@@ -58,11 +61,18 @@ export default {
   },
   methods: {
     onSubmit() {
-      const auth = firebase.auth();
-      auth.signInWithEmailAndPassword(this.email, this.password).then(cred => {
-        this.$store.dispatch("saveUserId", cred.user.ra);
-        this.$router.push("/bestellung");
-      });
+      firebase
+        .auth()
+        .signInWithEmailAndPassword(this.email, this.password)
+        .then(
+          () => {
+            alert(`Willkommen und viel Spaß mit der SushiApp`);
+            this.$router.go({ path: this.$router.path });
+          },
+          err => {
+            alert(err.message);
+          }
+        );
     }
   }
 };

@@ -1,13 +1,11 @@
 import _ from "underscore";
-import { router } from "../../main";
-import axios from "axios";
-import * as firebase from "firebase/app";
+import router from "../../main";
 import "firebase/auth";
+import db from "../../components/firebaseinit";
 
 const state = {
   orderItems: [],
-  doneSushi: [],
-  UserID: null
+  doneSushi: []
 };
 
 const getters = {
@@ -15,22 +13,15 @@ const getters = {
     return state.orderItems;
   },
   getTableInfo() {
-    axios
-      .get("https://kunz-sushi-35c35.firebaseio.com/orderItem.json", {
-        params: {
-          auth: state.UserID
+    db.collection("orderItems").onSnapshot(snapshot => {
+      snapshot.docChanges().forEach(change => {
+        if (change.type === "added") {
+          var data = change.doc.data();
+          state.orderItems.push(data);
         }
-      })
-      .then(response => {
-        state.orderItems = response.data;
       });
-  },
-  isLoggedIn: state => {
-    if (state.UserID != null) {
-      return true;
-    }
-  },
-  serveToken: state => state.UserID
+    });
+  }
 };
 
 const mutations = {
@@ -45,13 +36,10 @@ const mutations = {
       _.extend(el, tableInfo);
     });
   },
-  ORDER(state, idToken) {
+  ORDER(state) {
     state.orderItems.forEach(function(el) {
-      axios
-        .post(
-          `https://kunz-sushi-35c35.firebaseio.com/orderItem.json?auth=${idToken}`,
-          el
-        )
+      db.collection("orderItems")
+        .add(el)
         .then(res => {
           // eslint-disable-next-line
           console.log(res);
@@ -63,12 +51,6 @@ const mutations = {
   },
   CLEAR_STATE(state) {
     state.orderItems = [];
-  },
-  SET_UID(state, idToken) {
-    state.UserID = idToken;
-  },
-  SET_NEW_TOKEN(state, idToken) {
-    state.UserID = idToken;
   }
 };
 
@@ -81,36 +63,8 @@ const actions = {
   },
   addTable: ({ commit }, tableInfo) => {
     commit("ADD_TABLE", tableInfo);
-    firebase
-      .auth()
-      .currentUser.getIdToken(/* forceRefresh */ true)
-      .then(function(idToken) {
-        commit("ORDER", idToken);
-      })
-      .catch(function(error) {
-        // eslint-disable-next-line
-        console.log(error);
-      });
+    commit("ORDER");
     router.push("/bestellung");
-  },
-  saveUserId: ({ commit }, idToken) => {
-    commit("SET_UID", idToken);
-  },
-  logout: ({ commit }) => {
-    commit("SET_UID", null);
-    router.push("/");
-  },
-  refreshToken({ commit }) {
-    firebase
-      .auth()
-      .currentUser.getIdToken(/* forceRefresh */ true)
-      .then(function(idToken) {
-        commit("SET_NEW_TOKEN", idToken);
-      })
-      .catch(function(error) {
-        // eslint-disable-next-line
-        console.log(error);
-      });
   }
 };
 

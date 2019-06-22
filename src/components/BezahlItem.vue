@@ -11,7 +11,7 @@
       @click="selectGroup(pay.party)"
     >{{pay.party}}</div>
 
-    <div class="p-2 bd-highlight ml-auto">{{pay.price}}</div>
+    <div class="p-2 bd-highlight ml-auto">{{parseFloat(pay.price).toFixed(2)}}</div>
     <div class="p-2 bd-highlight "><i
         class="fas fa-trash"
         @click="removeItem(pay.quantity, pay.price)"

@@ -123,13 +123,31 @@
 
 
 <script>
-import { mapActions, mapGetters } from "vuex";
+import firebase from "firebase/app";
 
 export default {
   name: "AppHeader",
-  computed: mapGetters(["isLoggedIn"]),
+  data() {
+    return {
+      isLoggedIn: false,
+      currentUser: false
+    };
+  },
+  created() {
+    if (firebase.auth().currentUser) {
+      this.isLoggedIn = true;
+    }
+  },
   methods: {
-    ...mapActions(["logout"])
+    logout() {
+      firebase
+        .auth()
+        .signOut()
+        .then(() => {
+          // this.$router.go({ path: this.$router.path });
+          this.$router.go({ path: this.$router.path });
+        });
+    }
   }
 };
 </script>

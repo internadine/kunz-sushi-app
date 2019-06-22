@@ -1,5 +1,6 @@
 <template>
   <div class="container">
+    <!-- start sushi div -->
     <div
       class="menuItem text-info border rounded border-info shadow"
       v-for="(item, index) in sushi"
@@ -23,7 +24,7 @@
         >{{option}} </div>
         <div class="p-2 "><i
             class="fas fa-check-circle fa-3x"
-            @click="setToDone(item.dbID, item.name, item.orderTime, item.party, item.price, item.quantity, item.table, item.type, item.options, item.party)"
+            @click="setToDone(item.id, item.name, item.orderTime, item.party, item.price, item.quantity, item.table, item.type, item.options, item.party)"
           ></i>
         </div>
       </div>
@@ -32,12 +33,12 @@
         class="fas fa-download fa-3x text-info mt-5"
         @click="fetchSushi"
       ></i></div>
-
+    <!-- end sushi div -->
   </div>
 </template>
 
 <script>
-import axios from "axios";
+import db from "./firebaseinit";
 import _ from "underscore";
 
 export default {
@@ -48,57 +49,40 @@ export default {
     };
   },
   created() {
-    this.$store.dispatch("refreshToken");
-    axios
-      .get(
-        'https://kunz-sushi-35c35.firebaseio.com/orderItem.json?orderBy="type"&equalTo="sushi"',
-        {
-          params: {
-            auth: this.$store.getters.serveToken
+    db.collection("orderItems")
+      .where("type", "==", "sushi")
+      .onSnapshot(snapshot => {
+        snapshot.docChanges().forEach(change => {
+          if (change.type === "added") {
+            var sushi = change.doc.data();
+            sushi.id = change.doc.id;
+            this.sushi.push(sushi);
           }
-        }
-      )
-      .then(response => {
-        const data = response.data;
-        let order = [];
-        for (const key in data) {
-          let item = data[key];
-          item = _.extend(item, {
-            dbID: key
-          });
-          item.id = data[key];
-          order.push(item);
-        }
-        order = _.sortBy(order, "orderTime");
-        this.sushi = order;
+          if (change.type === "removed") {
+            this.sushi.forEach(el => {
+              if (el.id === change.doc.id) {
+                // find element with id and delete element
+                this.sushi.splice(el, 1);
+              }
+            });
+          }
+        });
       });
+    this.sushi = _.sortBy(this.order, "orderTime");
   },
   methods: {
     fetchSushi() {
-      this.$store.dispatch("refreshToken");
-      axios
-        .get(
-          'https://kunz-sushi-35c35.firebaseio.com/orderItem.json?orderBy="type"&equalTo="sushi"',
-          {
-            params: {
-              auth: this.$store.getters.serveToken
-            }
-          }
-        )
-        .then(response => {
-          const data = response.data;
-          let order = [];
-          for (const key in data) {
-            let item = data[key];
-            item = _.extend(item, {
-              dbID: key
-            });
-            item.id = data[key];
-            order.push(item);
-          }
-          order = _.sortBy(order, "orderTime");
-          this.sushi = order;
+      db.collection("orderItems")
+        .where("type", "==", "sushi")
+        .get()
+        .then(res => {
+          res.forEach(doc => {
+            var sushi = doc.data();
+            sushi.id = doc.id;
+            this.sushi.push(sushi);
+          });
         });
+      this.sushi = _.sortBy(this.order, "orderTime");
     },
     setToDone(
       dbID,
@@ -132,42 +116,11 @@ export default {
         options: options,
         party: party
       };
-      axios
-        .put(
-          `https://kunz-sushi-35c35.firebaseio.com/orderItem/${dbID}.json`,
-          doneSushi,
-          {
-            params: {
-              auth: this.$store.getters.serveToken
-            }
-          }
-        )
-        .then(res => {
-          // eslint-disable-next-line
-          console.log(res);
-          axios
-            .get(
-              'https://kunz-sushi-35c35.firebaseio.com/orderItem.json?orderBy="type"&equalTo="sushi"',
-              {
-                params: {
-                  auth: this.$store.getters.serveToken
-                }
-              }
-            )
-            .then(response => {
-              const data = response.data;
-              let order = [];
-              for (const key in data) {
-                let item = data[key];
-                item = _.extend(item, {
-                  dbID: key
-                });
-                item.id = data[key];
-                order.push(item);
-              }
-              order = _.sortBy(order, "orderTime");
-              this.sushi = order;
-            });
+      db.collection("orderItems")
+        .doc(dbID)
+        .set(doneSushi)
+        .then(() => {
+          this.fetchSushi();
         })
         // eslint-disable-next-line
         .catch(error => console.log(error));

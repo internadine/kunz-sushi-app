@@ -3,7 +3,6 @@
   <div class="container text-center mt-5">
 
     <!-- Choose type of Menu-Item -->
-
     <div
       class="btn-group shadow mb-2"
       role="group"
@@ -31,6 +30,7 @@
 
     <hr />
 
+    <!-- Choose type of drink  -->
     <div
       v-if="selection === 'sonstige' || selection === 'bier' | selection === 'wein'"
       class="btn-group shadow mb-3"
@@ -75,7 +75,7 @@
 
 <script>
 import Item from "./Item.vue";
-import axios from "axios";
+import db from "./firebaseinit";
 
 export default {
   name: "Bestellung",
@@ -86,41 +86,39 @@ export default {
   data() {
     return {
       menu: [],
-      selection: "sonstige",
-      attachBG: false,
-      search: ""
+      selection: "sonstige"
     };
   },
   created() {
-    this.$store.dispatch("refreshToken");
-    axios
-      .get("https://kunz-sushi-35c35.firebaseio.com/menu.json", {
-        params: {
-          auth: this.$store.getters.serveToken
+    //  real-time listener on Menu-Collection
+    db.collection("menu").onSnapshot(snapshot => {
+      snapshot.docChanges().forEach(change => {
+        if (change.type === "added") {
+          // add id to dataset and push to this.menu
+          var data = change.doc.data();
+          this.menu.push(data);
+          this.menu.sort();
+          // sort by name in alphabetical order
+          this.menu.sort(function(a, b) {
+            if (a.name < b.name) {
+              return -1;
+            }
+            if (a.name > b.name) {
+              return 1;
+            }
+            return 0;
+          });
         }
-      })
-      .then(response => {
-        const data = response.data;
-        const menu = [];
-        for (let key in data) {
-          const item = data[key];
-          item.id = data[key];
-          menu.push(item);
+        if (change.type === "removed") {
+          this.menu.forEach(el => {
+            if (el.id === change.doc.id) {
+              // find element with id and delete element
+              this.menu.splice(el, 1);
+            }
+          });
         }
-        this.menu = menu;
       });
-  },
-
-  methods: {
-    table() {
-      this.$router.push("/tisch");
-    }
+    });
   }
 };
 </script>
-
-<style scoped>
-.green {
-  background-color: #e0e0e0;
-}
-</style>
