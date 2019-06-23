@@ -5,6 +5,7 @@
       <div class="col-2"></div>
       <div class="col-8 ">
         <div class="container border rounded p-5 shadow">
+          <!-- success alert -->
           <div
             class="alert alert-success alert-dismissible fade show"
             role="alert"
@@ -16,7 +17,7 @@
               class="close"
               data-dismiss="alert"
               aria-label="Close"
-              @click="resetSuccess"
+              @click="reset = false"
             >
               <span aria-hidden="true">&times;</span>
             </button>
@@ -26,33 +27,24 @@
             role="alert"
             v-if="error"
           >
+            <!-- error alert -->
             <strong>Ooops! </strong> Da ist was schiefgegangen. Bitte versuche es noch einmal.
             <button
               type="button"
               class="close"
               data-dismiss="alert"
               aria-label="Close"
-              @click="resetSuccess"
+              @click="error = false"
             >
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
-
+          <!-- start menu form  -->
           <form
             @submit.prevent="onSubmit"
             id="menuForm"
           >
-            <div class="form-group">
-              <label for="number">Number</label>
-              <input
-                type="number"
-                name=""
-                id="number"
-                placeholder="Nummer"
-                class="form-control"
-                v-model="number"
-              >
-            </div>
+
             <div class="form-group">
               <label for="name">Name</label>
               <input
@@ -263,20 +255,39 @@
             >Anlegen</button>
 
           </form>
-
+          <!-- end menu form -->
           <hr>
+          <!-- succes alert for "Item deleted" -->
           <div
             class="alert alert-success alert-dismissible fade show"
             role="alert"
             v-if="deleted"
           >
-            <strong>Super! </strong> Das neue Gericht ist gelöscht.
+            Das Gericht wurde gelöscht.
             <button
               type="button"
               class="close"
               data-dismiss="alert"
               aria-label="Close"
-              @click="resetDeleted"
+              @click="deleted = false"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <!-- alert for "no item found" -->
+          <div
+            class="alert alert-warning alert-dismissible fade show"
+            role="alert"
+            v-if="noItem"
+          >
+
+            Es wurde kein Gericht mit diesem Namen in der Karte gefunden.
+            <button
+              type="button"
+              class="close"
+              data-dismiss="alert"
+              aria-label="Close"
+              @click="noItem = false"
             >
               <span aria-hidden="true">&times;</span>
             </button>
@@ -284,7 +295,7 @@
           <div>
 
           </div>
-
+          <!-- search for item in menu -->
           <form
             @submit.prevent="onSearch"
             class="mt-5"
@@ -303,10 +314,24 @@
             </div>
             <button
               type="submit"
-              class="btn btn-lg btn-danger mt-3"
-            >Gericht löschen</button>
+              class="btn btn-lg btn-info mt-3"
+            >Suchen</button>
           </form>
+          <div
+            v-for="(item, index) in deleteItems"
+            :key="index"
+          >
+            <ul class="list-group shadow p-2 text-info mt-3">
+              <li class="d-flex list-group-item text-left">
+                <div class="p-2 bd-highlight">{{item.name}}</div>
+                <div
+                  class="p-2 bd-highlight ml-auto"
+                  @click="deleteItem(item.id)"
+                ><i class="fas fa-trash"></i></div>
+              </li>
+            </ul>
 
+          </div>
         </div>
 
       </div>
@@ -318,13 +343,11 @@
 </template>
 
 <script>
-import axios from "axios";
-import _ from "underscore";
+import db from "./firebaseinit";
 export default {
   name: "Menu-Form",
   data() {
     return {
-      number: null,
       name: "",
       euro: null,
       cent: null,
@@ -333,94 +356,61 @@ export default {
       success: false,
       error: false,
       searchItem: "",
-      deleted: false
+      deleted: false,
+      deleteItems: [],
+      noItem: false
     };
   },
   methods: {
-    onSearch() {
-      this.$store.dispatch("refreshToken");
-      axios
-        .get(
-          `https://kunz-sushi-35c35.firebaseio.com/menu.json?orderBy="name"&equalTo="${
-            this.searchItem
-          }"`,
-          {
-            params: {
-              auth: this.$store.getters.serveToken
-            }
-          }
-        )
-
-        .then(response => {
-          const data = response.data;
-          for (const key in data) {
-            let item = data[key];
-            item = _.extend(item, {
-              dbID: key
-            });
-            axios.delete(
-              `https://kunz-sushi-35c35.firebaseio.com/menu/${item.dbID}.json`,
-              {
-                params: {
-                  auth: this.$store.getters.serveToken
-                }
-              }
-            );
-          }
-        })
-        .then((this.deleted = true))
-        .catch(error => {
-          // eslint-disable-next-line
-          console.log(error);
-        });
-    },
-
     onSubmit() {
-      const formData = {
-        number: this.number,
+      let newItem = {
         name: this.name,
         price: `${this.euro}.${this.cent}`,
-        options: this.options,
         type: this.type
       };
-      this.$store.dispatch("refreshToken");
-      axios
-        .post("https://kunz-sushi-35c35.firebaseio.com/menu.json", formData, {
-          params: {
-            auth: this.$store.getters.serveToken
-          }
-        })
+      if (this.options.length > 0) {
+        newItem.options = this.options;
+      }
 
-        .then(res => {
-          // eslint-disable-next-line
-          console.log(res);
+      db.collection("menu")
+        .add(newItem)
+        .then(() => {
           this.success = true;
           this.clearForm();
         })
-
-        .catch(error => {
-          // eslint-disable-next-line
-          console.log(error);
-          this.error = true;
-          this.clearForm();
+        .catch(err => {
+          console.log(err);
         });
     },
-    resetSuccess() {
-      this.success = false;
-    },
-    resetError() {
-      this.error = false;
-    },
-    resetDeleted() {
-      this.deleted = false;
+    onSearch() {
+      db.collection("menu")
+        .where("name", "==", this.searchItem)
+        .get()
+        .then(res => {
+          if (res.empty === true) {
+            this.noItem = true;
+          }
+          res.forEach(doc => {
+            var data = doc.data();
+            data.id = doc.id;
+            this.deleteItems.push(data);
+          });
+        });
+      this.searchItem = "";
     },
     clearForm() {
-      (this.number = null),
-        (this.name = ""),
+      (this.name = ""),
         (this.euro = null),
         (this.cent = null),
         (this.options = []),
         (this.type = "");
+    },
+    deleteItem(id) {
+      db.collection("menu")
+        .doc(id)
+        .delete();
+      this.deleted = true;
+      this.deleteItems = [];
     }
   }
 };
