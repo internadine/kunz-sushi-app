@@ -11,7 +11,7 @@
         @change="getTableData"
       >
         <option
-          v-for="(number, index) in tables"
+          v-for="(number, index) in 20"
           :key="index"
         >{{number}}</option>
         <option disabled> -- </option>
@@ -112,29 +112,7 @@ export default {
       splitSum: null,
       payParty: "",
       subTotal: null,
-      subTotalItems: [],
-      tables: [
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9,
-        10,
-        11,
-        12,
-        13,
-        14,
-        15,
-        16,
-        17,
-        19,
-        19,
-        20
-      ]
+      subTotalItems: []
     };
   },
   components: {
@@ -143,6 +121,11 @@ export default {
   methods: {
     getTableData() {
       this.splitSum = null;
+      this.order = [];
+      this.sum = null;
+      this.payParty = "";
+      this.subTotal = null;
+      this.subTotalItems = [];
       db.collection("orderItems")
         .where("table", "==", this.table)
         .get()

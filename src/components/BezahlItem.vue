@@ -33,8 +33,8 @@ export default {
       this.$emit("getSubtotal", payItem, payPrice);
     },
     removeItem(quantity, price) {
-      if (parseFloat(this.pay.quantity) > 0) {
-        this.pay.quantity = parseFloat(this.pay.quantity) - 1;
+      if (this.pay.quantity > 0) {
+        this.pay.quantity = this.pay.quantity - 1;
         this.$emit("deleteItem", price);
       }
     }

@@ -9,7 +9,6 @@
       <div class="container text-right">
         <router-link to="/bestellung"><i class="fas fa-plus mt-3 text-info fa-3x"></i></router-link>
       </div>
-      <!-- choose table -->
       <div class="form-group mt-4 ">
         <label for="tisch">Tisch auswählen</label>
         <select
@@ -18,13 +17,14 @@
           v-model="table"
         >
           <option
-            v-for="(number, index) in tables"
+            v-for="(number, index) in 20"
             :key="index"
           >{{number}}</option>
           <option disabled> -- </option>
           <option>30</option>
         </select>
       </div>
+
       <!-- give party or group a name -->
       <div class="form-group mt-4">
         <label for="guests">Gäste / Gruppe</label>
@@ -57,42 +57,26 @@
 import tischAnsicht from "./TischAnsicht";
 export default {
   name: "Tisch",
+
   data() {
     return {
-      table: "",
       party: "",
-      tables: [
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9,
-        10,
-        11,
-        12,
-        13,
-        14,
-        15,
-        16,
-        17,
-        19,
-        19,
-        20
-      ]
+      table: null
     };
   },
+  created() {
+    var table = this.$store.getters.table;
+    this.table = table.toString();
+  },
+
   components: {
     tischAnsicht
   },
   methods: {
     addTable() {
       const tableInfo = {
-        table: this.table,
-        party: this.party
+        party: this.party,
+        table: this.table
       };
       this.$store.dispatch("addTable", tableInfo);
     }

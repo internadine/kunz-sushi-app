@@ -5,12 +5,15 @@ import db from "../../components/firebaseinit";
 
 const state = {
   orderItems: [],
-  doneSushi: []
+  table: ""
 };
 
 const getters = {
   orderItems: state => {
     return state.orderItems;
+  },
+  table: state => {
+    return state.table;
   },
   getTableInfo() {
     db.collection("orderItems").onSnapshot(snapshot => {
@@ -51,6 +54,9 @@ const mutations = {
   },
   CLEAR_STATE(state) {
     state.orderItems = [];
+  },
+  SET_TABLE(state, number) {
+    state.table = number;
   }
 };
 
@@ -64,6 +70,10 @@ const actions = {
   addTable: ({ commit }, tableInfo) => {
     commit("ADD_TABLE", tableInfo);
     commit("ORDER");
+    router.push("/tischwahl");
+  },
+  setTable: ({ commit }, number) => {
+    commit("SET_TABLE", number);
     router.push("/bestellung");
   }
 };

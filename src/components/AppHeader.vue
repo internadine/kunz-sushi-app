@@ -33,7 +33,7 @@
           >
             <router-link
               class="nav-link"
-              to="/bestellung"
+              to="/tischwahl"
               tag="li"
               active-class="active"
               exact

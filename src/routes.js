@@ -5,6 +5,7 @@ import Menu from "./components/Menu";
 import Tisch from "./components/Tisch";
 import Login from "./components/Login";
 import CheckTisch from "./components/CheckTisch";
+import TischWahl from "./components/TischWahl";
 
 export const routes = [
   {
@@ -49,6 +50,13 @@ export const routes = [
   {
     path: "/check",
     component: CheckTisch,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: "/tischwahl",
+    component: TischWahl,
     meta: {
       requiresAuth: true
     }
