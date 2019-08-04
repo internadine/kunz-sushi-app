@@ -146,22 +146,13 @@ export default {
         });
     },
     setStatus() {
-      var today = new Date();
-      var date =
-        today.getFullYear() +
-        "-" +
-        (today.getMonth() + 1) +
-        "-" +
-        today.getDate();
-      var time = today.getHours() + ":" + today.getMinutes();
-      var dateTime = date + " " + time;
       this.order.forEach(el => {
         if (this.payParty == el.party || this.payParty == "") {
-          if (!el.doneTime) {
-            el.doneTime = dateTime;
-          }
           if (!el.checkedTime) {
-            el.checkedTime = dateTime;
+            el.checkedTime = Date.now();
+          }
+          if (!el.doneTime) {
+            el.doneTime = Date.now();
           }
           const paidOrder = {
             name: el.name,
@@ -171,12 +162,13 @@ export default {
             options: el.options,
             type: el.type,
             doneTime: el.doneTime,
-            checkedTime: el.checkedTime
+            checkedTime: el.checkedTime,
+            paidTime: Date.now()
           };
           db.collection("orderItems")
             .doc(el.id)
             .delete();
-          db.collection("History").add(paidOrder);
+          db.collection("NewHistory").add(paidOrder);
         }
       });
       this.table = null;

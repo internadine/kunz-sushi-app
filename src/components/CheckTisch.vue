@@ -49,7 +49,7 @@
     </div>
 
     <div class="container text-right">
-      <router-link to="/bestellung"><i class="fas fa-plus mt-3 text-info fa-3x"></i></router-link>
+      <router-link to="/tischwahl"><i class="fas fa-plus mt-3 text-info fa-3x"></i></router-link>
     </div>
 
   </div>
@@ -85,7 +85,6 @@ export default {
             this.order.push(data);
           });
           this.order = _.sortBy(this.order, "orderTime");
-          console.log(this.order);
         });
     },
     checked(dbID) {
@@ -102,20 +101,11 @@ export default {
       });
     },
     rememberStatus() {
-      var today = new Date();
-      var date =
-        today.getFullYear() +
-        "-" +
-        (today.getMonth() + 1) +
-        "-" +
-        today.getDate();
-      var time = today.getHours() + ":" + today.getMinutes();
-      var dateTime = date + " " + time;
       this.checkedID.forEach(id => {
         this.order.forEach(el => {
           if (el.id === id) {
             if (!el.doneTime) {
-              el.doneTime = dateTime;
+              el.doneTime = Date.now();
             }
             var checkedItem = {
               name: el.name,
@@ -127,7 +117,7 @@ export default {
               status: "checked",
               table: el.table,
               type: el.type,
-              checkedTime: dateTime,
+              checkedTime: Date.now(),
               doneTime: el.doneTime
             };
             db.collection("orderItems")

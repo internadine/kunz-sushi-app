@@ -6,6 +6,7 @@ import Tisch from "./components/Tisch";
 import Login from "./components/Login";
 import CheckTisch from "./components/CheckTisch";
 import TischWahl from "./components/TischWahl";
+import DoneSushi from "./components/DoneSushi";
 
 export const routes = [
   {
@@ -57,6 +58,13 @@ export const routes = [
   {
     path: "/tischwahl",
     component: TischWahl,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: "/doneSushi",
+    component: DoneSushi,
     meta: {
       requiresAuth: true
     }
