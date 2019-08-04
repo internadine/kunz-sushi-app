@@ -99,15 +99,6 @@ export default {
   },
   methods: {
     order() {
-      var today = new Date();
-      var date =
-        today.getFullYear() +
-        "-" +
-        (today.getMonth() + 1) +
-        "-" +
-        today.getDate();
-      var time = today.getHours() + ":" + today.getMinutes();
-      var dateTime = date + " " + time;
       var intPrice = parseFloat(this.item.price);
       if (this.filling.includes("Garnele")) {
         intPrice += 2;
@@ -118,7 +109,7 @@ export default {
         quantity: this.quantity,
         type: this.selection,
         status: "open",
-        orderTime: dateTime,
+        orderTime: Date.now(),
         options: this.filling
       };
       // eslint-disable-next-line

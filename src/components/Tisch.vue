@@ -45,7 +45,16 @@
       <div class="d-flex justify-content-center"><button
           class="btn btn-lg btn-info shadow mt-5 "
           type="submit"
-        >Bestellung abschicken</button></div>
+          v-if="table"
+        >Bestellung abschicken</button>
+        <div
+          v-else
+          class="alert alert-danger"
+          role="alert"
+        >
+          Bitte erst einen Tisch auswählen!
+        </div>
+      </div>
 
     </form>
     <!-- end of form  -->

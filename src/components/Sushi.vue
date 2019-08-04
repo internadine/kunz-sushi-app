@@ -1,5 +1,23 @@
 <template>
-  <div class="container">
+  <div class="container text-center mt-5">
+
+    <!-- Choose type of Menu-Item -->
+    <div
+      class="btn-group shadow mb-2"
+      role="group"
+      aria-label="Basic example"
+    >
+      <router-link to="doneSushi"><button
+          type="button"
+          class="btn btn-info"
+          @click="selection = 'sushi'"
+        > <i class="fas fa-fish"></i>
+          Erledigt</button></router-link>
+
+    </div>
+
+    <hr />
+
     <!-- start sushi div -->
     <div
       class="menuItem text-info border rounded border-info shadow"
@@ -24,22 +42,18 @@
         >{{option}} </div>
         <div class="p-2 "><i
             class="fas fa-check-circle fa-3x"
-            @click="setToDone(item.id, item.name, item.orderTime, item.party, item.price, item.quantity, item.table, item.type, item.options, item.party)"
+            @click="setToDone(item.id)"
           ></i>
         </div>
       </div>
     </div>
-    <div class="container text-right"><i
-        class="fas fa-download fa-3x text-info mt-5"
-        @click="fetchSushi"
-      ></i></div>
+
     <!-- end sushi div -->
   </div>
 </template>
 
 <script>
 import db from "./firebaseinit";
-import _ from "underscore";
 
 export default {
   name: "Sushi",
@@ -51,6 +65,7 @@ export default {
   created() {
     db.collection("orderItems")
       .where("type", "==", "sushi")
+      .orderBy("orderTime", "asc")
       .onSnapshot(snapshot => {
         snapshot.docChanges().forEach(change => {
           if (change.type === "added") {
@@ -68,62 +83,34 @@ export default {
           }
         });
       });
-    this.sushi = _.sortBy(this.order, "orderTime");
   },
   methods: {
-    fetchSushi() {
-      db.collection("orderItems")
-        .where("type", "==", "sushi")
-        .get()
-        .then(res => {
-          res.forEach(doc => {
-            var sushi = doc.data();
-            sushi.id = doc.id;
-            this.sushi.push(sushi);
-          });
-        });
-      this.sushi = _.sortBy(this.order, "orderTime");
-    },
-    setToDone(
-      dbID,
-      name,
-      orderTime,
-      party,
-      price,
-      quantity,
-      table,
-      type,
-      options
-    ) {
-      var today = new Date();
-      var date =
-        today.getFullYear() +
-        "-" +
-        (today.getMonth() + 1) +
-        "-" +
-        today.getDate();
-      var time = today.getHours() + ":" + today.getMinutes();
-      var dateTime = date + " " + time;
+    setToDone(dbID) {
       const doneSushi = {
-        name: name,
-        price: price,
-        quantity: quantity,
-        orderTime: orderTime,
-        doneTime: dateTime,
-        status: status,
-        type: "done-sushi",
-        table: table,
-        options: options,
-        party: party
+        doneTime: Date.now(),
+        type: "done-sushi"
       };
       db.collection("orderItems")
         .doc(dbID)
-        .set(doneSushi)
-        .then(() => {
-          this.fetchSushi();
-        })
+        .set(doneSushi, { merge: true })
+        .then(this.fetchSushi())
         // eslint-disable-next-line
         .catch(error => console.log(error));
+    },
+    fetchSushi() {
+      this.sushi = [];
+      db.collection("orderItems")
+        .where("type", "==", "sushi")
+        .orderBy("orderTime")
+        .onSnapshot(snapshot => {
+          snapshot.docChanges().forEach(change => {
+            if (change.type === "added") {
+              var sushi = change.doc.data();
+              sushi.id = change.doc.id;
+              this.sushi.push(sushi);
+            }
+          });
+        });
     }
   }
 };
