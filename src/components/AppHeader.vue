@@ -10,6 +10,7 @@
         class="navbar-brand"
         to="/"
       >KUNZ </router-link>
+
       <button
         class="navbar-toggler"
         type="button"
@@ -87,6 +88,45 @@
               exact
             > <i class="d-none d-md-inline fas fa-file-alt fa-2x"></i> Karte </router-link>
           </li>
+          <li
+            v-if="currentUser === 'JsY5XtSBo6eUJrNvRBYKjnMJQxq1' || currentUser === 'AuzMS1nTZhaRxJDYAnlkTuqPTs82' || currentUser === 'cc3zR0PFOHMfkZuYyZscVKQeo6g2'"
+            class="nav-item dropdown"
+          >
+            <a
+              class="nav-link dropdown-toggle"
+              to="#"
+              id="navbarDropdown"
+              role="button"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              Statistiken
+            </a>
+            <div
+              class="dropdown-menu"
+              aria-labelledby="navbarDropdown"
+            >
+              <router-link
+                class="dropdown-item"
+                to="/stat_stueck"
+              >Anzahl - Produkt</router-link>
+              <router-link
+                class="dropdown-item"
+                to="/stat_sushiUmsatz"
+              >Umsatz - Produkt</router-link>
+              <div class="dropdown-divider"></div>
+              <router-link
+                class="dropdown-item"
+                to="/stat_Umsatz"
+              >Umsatz - Kalenderwoche</router-link>
+              <div class="dropdown-divider"></div>
+              <router-link
+                class="dropdown-item"
+                to="/waiting"
+              >Wartezeit - Kalenderwoche</router-link>
+            </div>
+          </li>
         </ul>
         <ul class="navbar-nav ml-auto">
           <li
@@ -136,6 +176,7 @@ export default {
   created() {
     if (firebase.auth().currentUser) {
       this.isLoggedIn = true;
+      this.currentUser = firebase.auth().currentUser.uid;
     }
   },
   methods: {
