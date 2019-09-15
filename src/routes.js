@@ -7,6 +7,10 @@ import Login from "./components/Login";
 import CheckTisch from "./components/CheckTisch";
 import TischWahl from "./components/TischWahl";
 import DoneSushi from "./components/DoneSushi";
+import Stat_Stueck from "./components/dashboard/Sushi_Stueck";
+import Stat_Euro from "./components/dashboard/Sushi_Euro";
+import Stat_Umsatz from "./components/dashboard/Umsatz_Tag";
+import Stat_Waiting from "./components/dashboard/Waiting_Time";
 
 export const routes = [
   {
@@ -65,6 +69,34 @@ export const routes = [
   {
     path: "/doneSushi",
     component: DoneSushi,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: "/stat_stueck",
+    component: Stat_Stueck,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: "/stat_sushiUmsatz",
+    component: Stat_Euro,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: "/stat_Umsatz",
+    component: Stat_Umsatz,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: "/waiting",
+    component: Stat_Waiting,
     meta: {
       requiresAuth: true
     }
