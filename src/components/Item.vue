@@ -5,81 +5,52 @@
     v-if="item.type == selection"
     class="list-group-item text-left"
   >
-    <!-- show "remembered"-alert -->
     <div
-      class="alert alert-info alert-dismissible fade show"
-      role="alert"
-      v-if="success"
-    >
-      Gemerkt!
+      class="bd-highlight"
+      style="color: #990000"
+    ><span
+        v-if="quantity > 0"
+        class="mx-2"
+        style="color: #5bc0de"
+      >{{quantity}}</span><span @click="addFilling = true">{{item.name}}</span>
+      <i
+        class="fas fa-check-circle fa-2x ml-1"
+        style="float: right;"
+        @click="order()"
+      ></i>
+
       <button
         type="button"
-        class="close"
-        data-dismiss="alert"
-        aria-label="Close"
-        @click="resetSuccess"
-      >
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-    <div
-      class="p-2 bd-highlight"
-      style="color: #990000"
-    >{{item.name}} <small class="text-info ml-3"> {{parseFloat(item.price).toFixed(2)}}
-        Euro </small></div>
-    <div
-      v-if="item.options"
-      class="p-2 bd-highlight text-muted"
-    > mit
-      <small
-        class="ml-4 text-info"
-        v-for="(item, index) in filling"
-        :key="index"
-        @click="remove(index, item)"
-      > {{item}} </small> </div>
-    <div class="p-2 bd-hightlight">
-      <select
-        class="form-control"
-        @change="order"
-        v-model="quantity"
-      >
-        <option disabled> 0</option>
-        <!-- standard number of items -->
-        <option
-          v-for="(number, index) in standard"
-          :key="index"
-        >{{number}}</option>
-        <!-- more items available for smaller items -->
-        <option v-if="item.name ==='Nigiri' || item.name === 'Temaki' || item.name === 'Roses'">6</option>
-        <option v-if="item.name ==='Nigiri' || item.name === 'Temaki' || item.name === 'Roses'">7</option>
-        <option v-if="item.name ==='Nigiri' || item.name === 'Temaki' || item.name === 'Roses'">8</option>
-        <option v-if="item.name ==='Nigiri' || item.name === 'Temaki' || item.name === 'Roses'">9</option>
-        <option v-if="item.name ==='Nigiri' || item.name === 'Temaki' || item.name === 'Roses'">10</option>
-        <option v-if="item.name ==='Nigiri' || item.name === 'Temaki' || item.name === 'Roses'">11</option>
-        <option v-if="item.name ==='Nigiri' || item.name === 'Temaki' || item.name === 'Roses'">12</option>
-        <option v-if="item.name ==='Nigiri' || item.name === 'Temaki' || item.name === 'Roses'">13</option>
-        <option v-if="item.name ==='Nigiri' || item.name === 'Temaki' || item.name === 'Roses'">14</option>
-        <option v-if="item.name ==='Nigiri' || item.name === 'Temaki' || item.name === 'Roses'">15</option>
+        class="btn btn-outline-info mx-1"
+        style="float: right;"
+        @click="add()"
+      >+</button>
 
-      </select>
-
-    </div>
-
+      <button
+        type="button"
+        class="btn btn-outline-info mx-1"
+        style="float: right;"
+        @click="subs()"
+      >-</button> </div>
     <div
-      class="p-2 bd-highlight text-info"
-      v-if="item.options"
+      v-if="addFilling"
+      class="mt-2"
     >
-      <!-- choose filling -->
+      <hr>
       <small
-        class="ml-4 text-muted"
+        class="text-muted ml-2"
         v-for="(option, index) in item.options"
-        :key="index"
+        :key="option"
         @click="selectFilling(option, index)"
-      >
-        {{option}} </small>
-
+      >{{option}}</small>
+      <hr>
+      <small
+        class="text-info ml-2"
+        v-for="(option, index) in filling"
+        :key="option"
+        @click="remove(option, index)"
+      >{{option}}</small>
     </div>
-
   </li>
 
 </template>
@@ -94,7 +65,8 @@ export default {
       markClicked: false,
       filling: [],
       success: false,
-      standard: [1, 2, 3, 4, 5]
+      standard: [1, 2, 3, 4, 5],
+      addFilling: false
     };
   },
   methods: {
@@ -115,8 +87,16 @@ export default {
       // eslint-disable-next-line
       console.log(orderItem);
       this.$store.dispatch("updateOrderItems", orderItem);
-      this.success = true;
+      this.item.options = this.filling.concat(this.item.options);
       this.quantity = 0;
+      this.filling = [];
+      this.addFilling = false;
+    },
+    add() {
+      this.quantity++;
+    },
+    subs() {
+      this.quantity--;
     },
     // select filling
     selectFilling(option, index) {
@@ -124,7 +104,7 @@ export default {
       this.item.options.splice(index, 1);
     },
     // remove filling
-    remove(index, ingredient) {
+    remove(ingredient, index) {
       this.filling.splice(index, 1);
       this.item.options.push(ingredient);
     },
