@@ -377,9 +377,6 @@ export default {
         .then(() => {
           this.success = true;
           this.clearForm();
-        })
-        .catch(err => {
-          console.log(err);
         });
     },
     onSearch() {

@@ -10,11 +10,11 @@ firebase
     if (err.code == "failed-precondition") {
       // Multiple tabs open, persistence can only be enabled
       // in one tab at a a time.
-      console.log("Multiple tabs open");
+      alert("Bitte schliesse die anderen Browser Tabs um fortzufahren.");
     } else if (err.code == "unimplemented") {
       // The current browser does not support all of the
       // features required to enable persistence
-      console.log("current browser does not support data persistence");
+      alert("Ihr aktueller Browser unterstützt keine Datenpersistenz");
     }
   });
 
