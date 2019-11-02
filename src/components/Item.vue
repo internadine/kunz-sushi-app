@@ -71,32 +71,36 @@ export default {
   },
   methods: {
     order() {
-      var intPrice = parseFloat(this.item.price);
-      if (this.filling.includes("Garnele")) {
-        intPrice += 2;
+      if (this.quantity > 0) {
+        var intPrice = parseFloat(this.item.price);
+        if (this.filling.includes("Garnele")) {
+          intPrice += 2;
+        }
+        const orderItem = {
+          name: this.item.name,
+          price: intPrice,
+          quantity: this.quantity,
+          type: this.selection,
+          status: "open",
+          orderTime: Date.now(),
+          options: this.filling
+        };
+        // eslint-disable-next-line
+        console.log(orderItem);
+        this.$store.dispatch("updateOrderItems", orderItem);
+        this.item.options = this.filling.concat(this.item.options);
+        this.quantity = 0;
+        this.filling = [];
+        this.addFilling = false;
       }
-      const orderItem = {
-        name: this.item.name,
-        price: intPrice,
-        quantity: this.quantity,
-        type: this.selection,
-        status: "open",
-        orderTime: Date.now(),
-        options: this.filling
-      };
-      // eslint-disable-next-line
-      console.log(orderItem);
-      this.$store.dispatch("updateOrderItems", orderItem);
-      this.item.options = this.filling.concat(this.item.options);
-      this.quantity = 0;
-      this.filling = [];
-      this.addFilling = false;
     },
     add() {
       this.quantity++;
     },
     subs() {
-      this.quantity--;
+      if (this.quantity > 0) {
+        this.quantity--;
+      }
     },
     // select filling
     selectFilling(option, index) {
