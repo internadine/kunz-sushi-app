@@ -14,7 +14,7 @@
     "firebase": "^6.0.2",
     "firebase-tools": "^6.11.0",
     "lodash": "^4.17.13",
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "qs": "^6.7.0",
     "underscore": "^1.9.1",
     "vue": "^2.6.6",
